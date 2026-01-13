@@ -194,16 +194,16 @@ rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bo
 
     // Poll the TickLE node for incoming messages
     // In a real implementation, this would check for new messages from the network
-    *taken = false;
-    int32_t len = __TEMP__tt_receive_packet(&tickle_subscriber->node->tickle_node, buffer, tt_MAX_BUFFER_LENGTH);
-    if (len == -1) {
-        // Timeout
-        return RMW_RET_OK;
-    } else if (len < 0) {
-        // I/O Error
-        return RMW_RET_ERROR;
-    }
-    memcpy(ros_message, buffer, len);
+    // *taken = false;
+    // int32_t len = __TEMP__tt_receive_packet(&tickle_subscriber->node->tickle_node, buffer, tt_MAX_BUFFER_LENGTH);
+    // if (len == -1) {
+    //     // Timeout
+    //     return RMW_RET_OK;
+    // } else if (len < 0) {
+    //     // I/O Error
+    //     return RMW_RET_ERROR;
+    // }
+    // memcpy(ros_message, buffer, len);
 
     // For now, we'll simulate message reception
     // In a real implementation, we would:
