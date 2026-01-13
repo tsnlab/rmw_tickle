@@ -23,37 +23,36 @@ include_directories(tickle/include)
 
 # Create rmw_tickle_c library
 add_library(rmw_tickle SHARED
-  src/rmw_tickle_c/rmw_init.c
-  src/rmw_tickle_c/rmw_get_implementation_identifier.c
-  src/rmw_tickle_c/rmw_get_serialization_format.c
-  src/rmw_tickle_c/identifiers.c
-  src/rmw_tickle_c/rmw_features.c
-  src/rmw_tickle_c/rmw_node.c
-  src/rmw_tickle_c/rmw_event.c
-  src/rmw_tickle_c/rmw_qos.c
-  src/rmw_tickle_c/rmw_count.c
-  src/rmw_tickle_c/rmw_gid.c
-  src/rmw_tickle_c/rmw_service.c
-  src/rmw_tickle_c/rmw_logging.c
-  src/rmw_tickle_c/rmw_topic_info.c
-  src/rmw_tickle_c/rmw_qos_check.c
-  src/rmw_tickle_c/rmw_network_flow.c
-  src/rmw_tickle_c/rmw_publisher.c
-  src/rmw_tickle_c/rmw_subscription.c
-  src/rmw_tickle_c/rmw_client.c
-  src/rmw_tickle_c/rmw_serialize.c
-  src/rmw_tickle_c/rmw_guard_condition.c
-  src/rmw_tickle_c/rmw_wait_set.c
-  src/rmw_tickle_c/rmw_event_handling.c
-  src/rmw_tickle_c/rmw_node_names.c
-  src/rmw_tickle_c/rmw_topic_names_and_types.c
-  src/rmw_tickle_c/rmw_publisher_names_and_types.c
-  src/rmw_tickle_c/rmw_service_names_and_types_by_node.c
-  src/rmw_tickle_c/rmw_event.c
-  src/rmw_tickle_c/rmw_dynamic_message.c
-  src/rmw_tickle_c/rmw_serialization_support.c
-  src/rmw_tickle_c/rmw_callback.c
-  src/rmw_tickle_c/__TEMP__messages.c
+  src/rmw_init.c
+  src/rmw_get_implementation_identifier.c
+  src/rmw_get_serialization_format.c
+  src/identifiers.c
+  src/rmw_features.c
+  src/rmw_node.c
+  src/rmw_event.c
+  src/rmw_qos.c
+  src/rmw_count.c
+  src/rmw_gid.c
+  src/rmw_service.c
+  src/rmw_logging.c
+  src/rmw_topic_info.c
+  src/rmw_qos_check.c
+  src/rmw_network_flow.c
+  src/rmw_publisher.c
+  src/rmw_subscription.c
+  src/rmw_client.c
+  src/rmw_serialize.c
+  src/rmw_guard_condition.c
+  src/rmw_wait_set.c
+  src/rmw_event_handling.c
+  src/rmw_node_names.c
+  src/rmw_topic_names_and_types.c
+  src/rmw_publisher_names_and_types.c
+  src/rmw_service_names_and_types_by_node.c
+  src/rmw_event.c
+  src/rmw_dynamic_message.c
+  src/rmw_serialization_support.c
+  src/rmw_callback.c
   tickle/src/encoding.c
   tickle/src/hal_linux.c
   tickle/src/log.c
