@@ -19,6 +19,7 @@ find_package(rosidl_typesupport_introspection_c REQUIRED)
 
 # Include directories
 include_directories(include)
+include_directories(tickle/include)
 
 # Create rmw_tickle_c library
 add_library(rmw_tickle SHARED
@@ -53,10 +54,10 @@ add_library(rmw_tickle SHARED
   src/rmw_tickle_c/rmw_serialization_support.c
   src/rmw_tickle_c/rmw_callback.c
   src/rmw_tickle_c/__TEMP__messages.c
-  src/tickle/encoding.c
-  src/tickle/hal_zephyr.c
-  src/tickle/log.c
-  src/tickle/tickle.c
+  tickle/src/encoding.c
+  tickle/src/hal_linux.c
+  tickle/src/log.c
+  tickle/src/tickle.c
 )
 
 # Link libraries

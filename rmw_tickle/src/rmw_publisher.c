@@ -25,7 +25,7 @@
 
 #include "rmw_tickle_c/rmw_tickle.h"
 
-#include "__TEMP__messages.h"
+// #include "__TEMP__messages.h"
 
 rmw_ret_t rmw_init_publisher_allocation(const rosidl_message_type_support_t* type_support,
                                         const rosidl_runtime_c__Sequence__bound* message_bounds,
@@ -97,19 +97,19 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
 
-    if ((strcmp(topic_name, "/microROS/ping") == 0) || (strcmp(topic_name, "/microROS/pong") == 0)) {
-        topic->data_size = sizeof(struct HeaderData);
-        topic->data_encode_size = (tt_DATA_ENCODE_SIZE)HeaderData_encode_size;
-        topic->data_encode = (tt_DATA_ENCODE)HeaderData_encode;
-        topic->data_decode = (tt_DATA_DECODE)HeaderData_decode;
-        topic->data_free = (tt_DATA_FREE)HeaderData_free;
-    } else if (strcmp(topic_name, "/chatter") == 0) {
-        topic->data_size = sizeof(struct StringData);
-        topic->data_encode_size = (tt_DATA_ENCODE_SIZE)StringData_encode_size;
-        topic->data_encode = (tt_DATA_ENCODE)StringData_encode;
-        topic->data_decode = (tt_DATA_DECODE)StringData_decode;
-        topic->data_free = (tt_DATA_FREE)StringData_free;
-    }
+    // if ((strcmp(topic_name, "/microROS/ping") == 0) || (strcmp(topic_name, "/microROS/pong") == 0)) {
+    //     topic->data_size = sizeof(struct HeaderData);
+    //     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)HeaderData_encode_size;
+    //     topic->data_encode = (tt_DATA_ENCODE)HeaderData_encode;
+    //     topic->data_decode = (tt_DATA_DECODE)HeaderData_decode;
+    //     topic->data_free = (tt_DATA_FREE)HeaderData_free;
+    // } else if (strcmp(topic_name, "/chatter") == 0) {
+    //     topic->data_size = sizeof(struct StringData);
+    //     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)StringData_encode_size;
+    //     topic->data_encode = (tt_DATA_ENCODE)StringData_encode;
+    //     topic->data_decode = (tt_DATA_DECODE)StringData_decode;
+    //     topic->data_free = (tt_DATA_FREE)StringData_free;
+    // }
 
     int32_t result = tt_Node_create_publisher(&tickle_publisher->node->tickle_node, &tickle_publisher->tickle_publisher,
                                               topic, topic_name);
