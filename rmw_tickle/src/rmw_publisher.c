@@ -43,6 +43,15 @@ rmw_ret_t rmw_fini_publisher_allocation(rmw_publisher_allocation_t* allocation) 
     return RMW_RET_UNSUPPORTED;
 }
 
+/**
+ * Validate arguments, QoS, 
+ * @param  node
+ * @param  type_support
+ * @param  topic_name
+ * @param  qos_policies
+ * @param  publisher_options
+ * @return 
+ */
 rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,
                                       const char* topic_name, const rmw_qos_profile_t* qos_policies,
                                       const rmw_publisher_options_t* publisher_options) {

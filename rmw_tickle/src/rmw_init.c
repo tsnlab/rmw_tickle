@@ -67,6 +67,10 @@ rmw_ret_t rmw_init_options_copy(const rmw_init_options_t* src, rmw_init_options_
     return RMW_RET_OK;
 }
 
+/**
+ * @param options
+ * @param context
+ */
 rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(options, RMW_RET_INVALID_ARGUMENT);
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(context, RMW_RET_INVALID_ARGUMENT);

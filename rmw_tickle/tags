@@ -1,0 +1,649 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALIGN	tickle/include/tickle/hal.h	29;"	d
+AR	tickle/Makefile	/^AR=ar$/;"	m
+BITS_IN_1BYTE	tickle/src/consts.h	3;"	d
+BITS_IN_2BYTES	tickle/src/consts.h	4;"	d
+BITS_IN_3BYTES	tickle/src/consts.h	5;"	d
+BITS_IN_4BYTES	tickle/src/consts.h	6;"	d
+CC	tickle/Makefile	/^CC=gcc$/;"	m
+CFLAGS	tickle/Makefile	/^CFLAGS=-I$(INCLUDE) -O0 -g -fPIC$/;"	m
+HAL_SRC	tickle/Makefile	/^HAL_SRC = $(SRC)\/hal_$(PLATFORM).c$/;"	m
+INCLUDE	tickle/Makefile	/^INCLUDE=include$/;"	m
+MASK_8BIT	tickle/src/consts.h	8;"	d
+NATIVE_MAGIC_VALUE	tickle/include/tickle/hal.h	32;"	d
+OBJ	tickle/Makefile	/^OBJ=obj$/;"	m
+OBJS	tickle/Makefile	/^OBJS = $(patsubst $(SRC)\/%.c,$(OBJ)\/%.o,$(SRC_FILES))$/;"	m
+PLATFORM	tickle/Makefile	/^    PLATFORM := generic$/;"	m
+PLATFORM	tickle/Makefile	/^    PLATFORM := linux$/;"	m
+REVERSE_MAGIC_VALUE	tickle/include/tickle/hal.h	33;"	d
+RMW_TICKLE_IDENTIFIER	include/rmw_tickle_c/rmw_tickle.h	15;"	d
+RMW_TICKLE_IDENTIFIER	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	15;"	d
+RMW_TICKLE_SERIALIZATION_FORMAT	include/rmw_tickle_c/rmw_tickle.h	18;"	d
+RMW_TICKLE_SERIALIZATION_FORMAT	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	18;"	d
+ROUNDUP	tickle/include/tickle/hal.h	30;"	d
+SEC_NS	tickle/src/hal_linux.c	20;"	d	file:
+SRC	tickle/Makefile	/^SRC=src$/;"	m
+SRC_FILES	tickle/Makefile	/^SRC_FILES = $(filter-out $(SRC)\/hal_%.c, $(wildcard $(SRC)\/*.c))$/;"	m
+SetBoolRequest	tickle/examples/set_bool/SetBool.h	/^struct SetBoolRequest {$/;"	s
+SetBoolRequest_decode	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolRequest_decode(struct SetBoolRequest* request, const uint8_t* payload, const int32_t len,$/;"	f
+SetBoolRequest_encode	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolRequest_encode(struct SetBoolRequest* request, uint8_t* payload, const int32_t len) {$/;"	f
+SetBoolRequest_encode_size	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolRequest_encode_size(struct SetBoolRequest* request) {$/;"	f
+SetBoolRequest_free	tickle/examples/set_bool/SetBool.c	/^void SetBoolRequest_free(struct SetBoolRequest* request) {$/;"	f
+SetBoolResponse	tickle/examples/set_bool/SetBool.h	/^struct SetBoolResponse {$/;"	s
+SetBoolResponse_decode	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolResponse_decode(struct SetBoolResponse* response, const uint8_t* payload, const int32_t len,$/;"	f
+SetBoolResponse_encode	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolResponse_encode(struct SetBoolResponse* response, uint8_t* payload, const int32_t len) {$/;"	f
+SetBoolResponse_encode_size	tickle/examples/set_bool/SetBool.c	/^int32_t SetBoolResponse_encode_size(struct SetBoolResponse* response) {$/;"	f
+SetBoolResponse_free	tickle/examples/set_bool/SetBool.c	/^void SetBoolResponse_free(struct SetBoolResponse* response) {$/;"	f
+SetBoolService	tickle/examples/set_bool/SetBool.c	/^struct tt_Service SetBoolService = {$/;"	v	typeref:struct:tt_Service
+StringData	src/__TEMP__messages.h	/^struct StringData {$/;"	s
+StringData	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.h	/^struct StringData {$/;"	s
+StringData_decode	src/__TEMP__messages.c	/^int32_t StringData_decode(struct StringData* data, const uint8_t* payload, const int32_t len, bool is_native_endian) {$/;"	f
+StringData_decode	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.c	/^int32_t StringData_decode(struct StringData* data, const uint8_t* payload, const int32_t len, bool is_native_endian) {$/;"	f
+StringData_encode	src/__TEMP__messages.c	/^int32_t StringData_encode(struct StringData* data, uint8_t* payload, const int32_t len) {$/;"	f
+StringData_encode	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.c	/^int32_t StringData_encode(struct StringData* data, uint8_t* payload, const int32_t len) {$/;"	f
+StringData_encode_size	src/__TEMP__messages.c	/^int32_t StringData_encode_size(struct StringData* data) {$/;"	f
+StringData_encode_size	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.c	/^int32_t StringData_encode_size(struct StringData* data) {$/;"	f
+StringData_free	src/__TEMP__messages.c	/^void StringData_free(struct StringData* data) {$/;"	f
+StringData_free	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.c	/^void StringData_free(struct StringData* data) {$/;"	f
+StringTopic	src/__TEMP__messages.c	/^struct tt_Topic StringTopic = {$/;"	v	typeref:struct:tt_Topic
+StringTopic	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.c	/^struct tt_Topic StringTopic = {$/;"	v	typeref:struct:tt_Topic
+TICKLE_MAX_ENDPOINT_COUNT	src/rmw_node_names.c	27;"	d	file:
+TICKLE_MAX_ENDPOINT_COUNT	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node_names.c	27;"	d	file:
+TIMEOUT_IN_MICROSECONDS	tickle/src/consts.h	10;"	d
+TT_LOG_DEBUG	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	e	enum:__anon1
+TT_LOG_DEBUG	tickle/src/log.h	32;"	d
+TT_LOG_ERROR	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	e	enum:__anon1
+TT_LOG_ERROR	tickle/src/log.h	35;"	d
+TT_LOG_INFO	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	e	enum:__anon1
+TT_LOG_INFO	tickle/src/log.h	33;"	d
+TT_LOG_NONE	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	e	enum:__anon1
+TT_LOG_WARNING	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	e	enum:__anon1
+TT_LOG_WARNING	tickle/src/log.h	34;"	d
+TT_PLATFORM_GENERIC	tickle/include/tickle/hal.h	14;"	d
+TT_PLATFORM_LINUX	tickle/include/tickle/hal.h	11;"	d
+TT_PLATFORM_NAME	tickle/include/tickle/hal.h	12;"	d
+TT_PLATFORM_NAME	tickle/include/tickle/hal.h	15;"	d
+TickLETestNode	tickle/test_tickle_rmw.cpp	/^    TickLETestNode() : Node("tickle_test_node") {$/;"	f	class:TickLETestNode
+TickLETestNode	tickle/test_tickle_rmw.cpp	/^class TickLETestNode : public rclcpp::Node {$/;"	c	file:
+UInt64Data	tickle/examples/uint64/UInt64.h	/^struct UInt64Data {$/;"	s
+UInt64Data_decode	tickle/examples/uint64/UInt64.c	/^int32_t UInt64Data_decode(struct UInt64Data* data, const uint8_t* payload, const int32_t len, bool is_native_endian) {$/;"	f
+UInt64Data_encode	tickle/examples/uint64/UInt64.c	/^int32_t UInt64Data_encode(struct UInt64Data* data, uint8_t* payload, const int32_t len) {$/;"	f
+UInt64Data_encode_size	tickle/examples/uint64/UInt64.c	/^int32_t UInt64Data_encode_size(struct UInt64Data* data) {$/;"	f
+UInt64Data_free	tickle/examples/uint64/UInt64.c	/^void UInt64Data_free(struct UInt64Data* data) {$/;"	f
+UInt64Topic	tickle/examples/uint64/UInt64.c	/^struct tt_Topic UInt64Topic = {$/;"	v	typeref:struct:tt_Topic
+UNAME_S	tickle/Makefile	/^UNAME_S := $(shell uname -s)$/;"	m
+UNUSED	tickle/src/hal_linux.c	22;"	d	file:
+UNUSED	tickle/src/tickle.c	13;"	d	file:
+__TEMP__tt_receive_packet	tickle/src/tickle.c	/^int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len) {$/;"	f
+_tt_CONFIG	tickle/src/hal_linux.c	/^struct _tt_Config _tt_CONFIG = {$/;"	v	typeref:struct:_tt_Config
+_tt_Config	tickle/include/tickle/config.h	/^struct _tt_Config {$/;"	s
+_tt_NODE_ADDRESS	tickle/include/tickle/config.h	23;"	d
+_tt_NODE_BROADCAST	tickle/include/tickle/config.h	25;"	d
+_tt_NODE_PORT	tickle/include/tickle/config.h	24;"	d
+_tt_bswap_16	tickle/include/tickle/hal.h	18;"	d
+_tt_bswap_32	tickle/include/tickle/hal.h	19;"	d
+_tt_bswap_64	tickle/include/tickle/hal.h	20;"	d
+_tt_free	tickle/include/tickle/hal.h	26;"	d
+_tt_malloc	tickle/include/tickle/hal.h	23;"	d
+_tt_memcpy	tickle/include/tickle/hal.h	24;"	d
+_tt_memmove	tickle/include/tickle/hal.h	25;"	d
+_tt_strncmp	tickle/include/tickle/hal.h	22;"	d
+_tt_strnlen	tickle/include/tickle/hal.h	21;"	d
+addr	tickle/include/tickle/config.h	/^    char* addr;$/;"	m	struct:_tt_Config
+allocator	include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_guard_condition_t
+allocator	include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_node_t
+allocator	include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_wait_set_t
+allocator	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_guard_condition_t
+allocator	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_node_t
+allocator	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rcutils_allocator_t allocator;$/;"	m	struct:rmw_tickle_wait_set_t
+bitmap	tickle/include/tickle/tickle.h	/^    uint64_t bitmap;$/;"	m	struct:tt_AckNackHeader
+broadcast	tickle/include/tickle/config.h	/^    char* broadcast;$/;"	m	struct:_tt_Config
+cache	tickle/include/tickle/tickle.h	/^    struct tt_SubmessageHeader* cache; \/\/ Last call cache$/;"	m	struct:tt_Client	typeref:struct:tt_Client::tt_SubmessageHeader
+cache	tickle/include/tickle/tickle.h	/^    struct tt_SubmessageHeader* cache[tt_MAX_SERVER_CACHE_COUNT];$/;"	m	struct:tt_Server	typeref:struct:tt_Server::tt_SubmessageHeader
+cache	tickle/src/tickle.c	/^    struct tt_SubmessageHeader* cache;$/;"	m	struct:server_cache_clean_config	typeref:struct:server_cache_clean_config::tt_SubmessageHeader	file:
+cache_time	tickle/include/tickle/tickle.h	/^    uint64_t cache_time;               \/\/ Cache time$/;"	m	struct:tt_Client
+call	tickle/examples/set_bool/client.c	/^static void call(struct tt_Node* node, uint64_t time, void* param) {$/;"	f	file:
+call_retry	tickle/src/tickle.c	/^static void call_retry(struct tt_Node* node, uint64_t time, void* param) {$/;"	f	file:
+call_retry_count	tickle/include/tickle/tickle.h	/^    uint32_t call_retry_count;    \/\/ 0 means tt_CALL_RETRY_COUNT$/;"	m	struct:tt_Service
+call_retry_interval	tickle/include/tickle/tickle.h	/^    uint32_t call_retry_interval; \/\/ 0 means auto$/;"	m	struct:tt_Service
+callback	tickle/include/tickle/tickle.h	/^    tt_CLIENT_CALLBACK callback;$/;"	m	struct:tt_Client
+callback	tickle/include/tickle/tickle.h	/^    tt_SERVER_CALLBACK callback;$/;"	m	struct:tt_Server
+callback	tickle/include/tickle/tickle.h	/^    tt_SUBSCRIBER_CALLBACK callback;$/;"	m	struct:tt_Subscriber
+context	include/rmw_tickle_c/rmw_tickle.h	/^    const rmw_context_t* context; \/\/ Store context reference$/;"	m	struct:rmw_tickle_node_t
+context	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    const rmw_context_t* context; \/\/ Store context reference$/;"	m	struct:rmw_tickle_node_t
+counter_	tickle/test_tickle_rmw.cpp	/^    int counter_ = 0;$/;"	m	class:TickLETestNode	file:
+data	src/__TEMP__messages.h	/^    char* data;$/;"	m	struct:StringData
+data	tickle/examples/set_bool/SetBool.h	/^    bool data;$/;"	m	struct:SetBoolRequest
+data	tickle/examples/uint64/UInt64.h	/^    uint64_t data;$/;"	m	struct:UInt64Data
+data	tickle/rmw_tickle/src/rmw_tickle_c/__TEMP__messages.h	/^    char* data;$/;"	m	struct:StringData
+data_decode	tickle/include/tickle/tickle.h	/^    tt_DATA_DECODE data_decode;$/;"	m	struct:tt_Topic
+data_encode	tickle/include/tickle/tickle.h	/^    tt_DATA_ENCODE data_encode;$/;"	m	struct:tt_Topic
+data_encode_size	tickle/include/tickle/tickle.h	/^    tt_DATA_ENCODE_SIZE data_encode_size;$/;"	m	struct:tt_Topic
+data_free	tickle/include/tickle/tickle.h	/^    tt_DATA_FREE data_free;$/;"	m	struct:tt_Topic
+data_size	tickle/include/tickle/tickle.h	/^    uint32_t data_size;$/;"	m	struct:tt_Topic
+deadline_duration	tickle/include/tickle/tickle.h	/^    uint32_t deadline_duration;$/;"	m	struct:tt_Topic
+decode	tickle/src/tickle.c	/^static void* decode(struct tt_Node* node, uint8_t* buffer, uint32_t* head, uint32_t tail, uint32_t length) {$/;"	f	file:
+decode_string	tickle/src/tickle.c	/^static bool decode_string(struct tt_Node* node, uint8_t* buffer, uint32_t* head, uint32_t tail, uint16_t* str_len,$/;"	f	file:
+dummy	include/rmw_tickle_c/rmw_tickle.h	/^    int dummy; \/\/ Temporary field to avoid empty struct$/;"	m	struct:rmw_tickle_context_impl_t
+dummy	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    int dummy; \/\/ Temporary field to avoid empty struct$/;"	m	struct:rmw_tickle_context_impl_t
+encode	tickle/src/tickle.c	/^static void* encode(struct tt_Node* node, uint32_t len) {$/;"	f	file:
+encode_string	tickle/src/tickle.c	/^static bool encode_string(struct tt_Node* node, const char* str) {$/;"	f	file:
+end_encode	tickle/src/tickle.c	/^static bool end_encode(struct tt_Node* node, struct tt_SubmessageHeader* submessage_header, bool is_flush) {$/;"	f	file:
+endpoint_count	tickle/include/tickle/tickle.h	/^    uint32_t endpoint_count;$/;"	m	struct:tt_Node
+endpoints	tickle/include/tickle/tickle.h	/^    struct tt_Endpoint* endpoints[tt_MAX_ENDPOINT_COUNT];$/;"	m	struct:tt_Node	typeref:struct:tt_Node::tt_Endpoint
+entity_count	tickle/include/tickle/tickle.h	/^    uint8_t entity_count;$/;"	m	struct:tt_UpdateHeader
+find_endpoint	tickle/src/tickle.c	/^static struct tt_Endpoint* find_endpoint(struct tt_Node* node, uint8_t kind, uint32_t id) {$/;"	f	file:
+flush_tx	tickle/src/tickle.c	/^static bool flush_tx(struct tt_Node* node, uint32_t len) {$/;"	f	file:
+function	tickle/include/tickle/tickle.h	/^    void (*function)(struct tt_Node* node, uint64_t time, void* param);$/;"	m	struct:tt_TCB
+get_server_cache	tickle/src/tickle.c	/^static struct tt_SubmessageHeader* get_server_cache(struct tt_Server* server, uint8_t receiver, uint16_t seq_no) {$/;"	f	file:
+graph_guard_condition	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_guard_condition_t graph_guard_condition;$/;"	m	struct:rmw_tickle_context_impl_t
+graph_guard_condition	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_guard_condition_t graph_guard_condition;$/;"	m	struct:rmw_tickle_context_impl_t
+guard_condition_count	include/rmw_tickle_c/rmw_tickle.h	/^    size_t guard_condition_count;$/;"	m	struct:rmw_tickle_wait_set_t
+guard_condition_count	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    size_t guard_condition_count;$/;"	m	struct:rmw_tickle_wait_set_t
+guard_conditions	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_guard_condition_t** guard_conditions;$/;"	m	struct:rmw_tickle_wait_set_t
+guard_conditions	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_guard_condition_t** guard_conditions;$/;"	m	struct:rmw_tickle_wait_set_t
+hal	tickle/include/tickle/tickle.h	/^    struct tt_hal hal;$/;"	m	struct:tt_Node	typeref:struct:tt_Node::tt_hal
+has_triggered	include/rmw_tickle_c/rmw_tickle.h	/^    bool has_triggered;$/;"	m	struct:rmw_tickle_guard_condition_t
+has_triggered	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    bool has_triggered;$/;"	m	struct:rmw_tickle_guard_condition_t
+history_depth	tickle/include/tickle/tickle.h	/^    uint16_t history_depth;$/;"	m	struct:tt_Topic
+id	tickle/include/tickle/tickle.h	/^    uint32_t id;        \/\/ endpoint id$/;"	m	struct:tt_CallResponseHeader
+id	tickle/include/tickle/tickle.h	/^    uint32_t id;     \/\/ endpoint id$/;"	m	struct:tt_CallRequestHeader
+id	tickle/include/tickle/tickle.h	/^    uint32_t id; \/\/ endpoint id$/;"	m	struct:tt_DataHeader
+id	tickle/include/tickle/tickle.h	/^    uint32_t id; \/\/ endpoint id: hash(type + name)$/;"	m	struct:tt_UpdateEntity
+id	tickle/include/tickle/tickle.h	/^    uint32_t id; \/\/ hash(type + name)$/;"	m	struct:tt_Endpoint
+id	tickle/include/tickle/tickle.h	/^    uint8_t id;$/;"	m	struct:tt_Node
+kind	tickle/include/tickle/tickle.h	/^    uint8_t kind;$/;"	m	struct:tt_Endpoint
+kind	tickle/include/tickle/tickle.h	/^    uint8_t kind;$/;"	m	struct:tt_UpdateEntity
+last_modified	tickle/include/tickle/tickle.h	/^    uint64_t last_modified; \/\/ Last modified timestamp in ns to announce other nodes e.g. server, publisher$/;"	m	struct:tt_Node
+last_modified	tickle/include/tickle/tickle.h	/^    uint64_t last_modified;$/;"	m	struct:tt_UpdateHeader
+latency	tickle/include/tickle/tickle.h	/^    uint32_t latency;                  \/\/ Call latency$/;"	m	struct:tt_Client
+length	tickle/include/tickle/tickle.h	/^    uint16_t length;  \/\/ Body length in 4 bytes including header$/;"	m	struct:tt_SubmessageHeader
+lifespan_duration	tickle/include/tickle/tickle.h	/^    uint32_t lifespan_duration;$/;"	m	struct:tt_Topic
+log_level_strings	tickle/src/log.c	/^static const char* log_level_strings[] = {"DEBUG", "INFO", "WARNING", "ERROR"};$/;"	v	file:
+magic	tickle/include/tickle/tickle.h	/^        char magic[2]; \/\/ "TK" for big endian, "KT" for little endian$/;"	m	union:tt_Header::__anon2
+magic_value	tickle/include/tickle/tickle.h	/^        uint16_t magic_value;$/;"	m	union:tt_Header::__anon2
+main	tickle/examples/set_bool/client.c	/^int main(int argc, char* argv) {$/;"	f
+main	tickle/examples/set_bool/server.c	/^int main(int argc, char* argv) {$/;"	f
+main	tickle/examples/uint64/publisher.c	/^int main(int argc, char* argv) {$/;"	f
+main	tickle/examples/uint64/subscriber.c	/^int main(int argc, char* argv) {$/;"	f
+main	tickle/test_tickle_rmw.cpp	/^int main(int argc, char* argv[]) {$/;"	f
+message	tickle/examples/set_bool/SetBool.h	/^    char* message;$/;"	m	struct:SetBoolResponse
+name	tickle/include/tickle/tickle.h	/^    const char* name;$/;"	m	struct:tt_Endpoint
+name	tickle/include/tickle/tickle.h	/^    const char* name;$/;"	m	struct:tt_Service
+name	tickle/include/tickle/tickle.h	/^    const char* name;$/;"	m	struct:tt_Topic
+node	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_client_t
+node	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_publisher_t
+node	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_service_t
+node	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_subscriber_t
+node	tickle/include/tickle/tickle.h	/^    struct tt_Node* node;$/;"	m	struct:tt_Client	typeref:struct:tt_Client::tt_Node
+node	tickle/include/tickle/tickle.h	/^    struct tt_Node* node;$/;"	m	struct:tt_Publisher	typeref:struct:tt_Publisher::tt_Node
+node	tickle/include/tickle/tickle.h	/^    struct tt_Node* node;$/;"	m	struct:tt_Server	typeref:struct:tt_Server::tt_Node
+node	tickle/include/tickle/tickle.h	/^    struct tt_Node* node;$/;"	m	struct:tt_Subscriber	typeref:struct:tt_Subscriber::tt_Node
+node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_client_t
+node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_publisher_t
+node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_service_t
+node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_tickle_node_t* node;$/;"	m	struct:rmw_tickle_subscriber_t
+node_flush	tickle/src/tickle.c	/^static void node_flush(struct tt_Node* node, uint64_t time, void* param) {$/;"	f	file:
+node_update	tickle/src/tickle.c	/^static void node_update(struct tt_Node* node, uint64_t time, void* param) {$/;"	f	file:
+param	tickle/include/tickle/tickle.h	/^    void* param;$/;"	m	struct:tt_TCB
+peek_scheduler	tickle/src/tickle.c	/^static struct tt_TCB* peek_scheduler(struct tt_Node* node) {$/;"	f	file:
+pop_scheduler	tickle/src/tickle.c	/^static void pop_scheduler(struct tt_Node* node) {$/;"	f	file:
+port	tickle/include/tickle/config.h	/^    int port;$/;"	m	struct:_tt_Config
+print_error	tickle/test_rmw_tickle.sh	/^print_error() {$/;"	f
+print_status	tickle/test_rmw_tickle.sh	/^print_status() {$/;"	f
+print_warning	tickle/test_rmw_tickle.sh	/^print_warning() {$/;"	f
+process_callrequest	tickle/src/tickle.c	/^static bool process_callrequest(struct tt_Node* node, struct tt_Header* header, uint8_t* buffer, uint32_t head,$/;"	f	file:
+process_callresponse	tickle/src/tickle.c	/^static bool process_callresponse(struct tt_Node* node, struct tt_Header* header, uint8_t* buffer, uint32_t head,$/;"	f	file:
+process_data	tickle/src/tickle.c	/^static bool process_data(struct tt_Node* node, struct tt_Header* header, uint8_t* buffer, uint32_t head,$/;"	f	file:
+process_data2	tickle/src/tickle.c	/^static bool process_data2(struct tt_Node* node, struct tt_Header* header, uint8_t* buffer, uint32_t head,$/;"	f	file:
+process_packet	tickle/src/tickle.c	/^static bool process_packet(struct tt_Node* node, uint8_t* buffer, uint32_t head, uint32_t tail) {$/;"	f	file:
+process_packet2	tickle/src/tickle.c	/^static bool process_packet2(struct tt_Node* node, uint8_t* buffer, uint32_t head, uint32_t tail, struct tt_Data* data, int32_t* processed_len) {$/;"	f	file:
+process_update	tickle/src/tickle.c	/^static bool process_update(struct tt_Node* node, struct tt_Header* header, uint8_t* buffer, uint32_t head,$/;"	f	file:
+publisher_	tickle/test_tickle_rmw.cpp	/^    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;$/;"	m	class:TickLETestNode	file:
+receiver	tickle/include/tickle/tickle.h	/^    uint8_t receiver; \/\/ Receiver ID$/;"	m	struct:tt_SubmessageHeader
+request_decode	tickle/include/tickle/tickle.h	/^    tt_REQUEST_DECODE request_decode;$/;"	m	struct:tt_Service
+request_encode	tickle/include/tickle/tickle.h	/^    tt_REQUEST_ENCODE request_encode;$/;"	m	struct:tt_Service
+request_encode_size	tickle/include/tickle/tickle.h	/^    tt_REQUEST_ENCODE_SIZE request_encode_size;$/;"	m	struct:tt_Service
+request_free	tickle/include/tickle/tickle.h	/^    tt_REQUEST_FREE request_free;$/;"	m	struct:tt_Service
+request_size	tickle/include/tickle/tickle.h	/^    uint32_t request_size;$/;"	m	struct:tt_Service
+response_decode	tickle/include/tickle/tickle.h	/^    tt_RESPONSE_DECODE response_decode;$/;"	m	struct:tt_Service
+response_encode	tickle/include/tickle/tickle.h	/^    tt_RESPONSE_ENCODE response_encode;$/;"	m	struct:tt_Service
+response_encode_size	tickle/include/tickle/tickle.h	/^    tt_RESPONSE_ENCODE_SIZE response_encode_size;$/;"	m	struct:tt_Service
+response_free	tickle/include/tickle/tickle.h	/^    tt_RESPONSE_FREE response_free;$/;"	m	struct:tt_Service
+response_size	tickle/include/tickle/tickle.h	/^    uint32_t response_size;$/;"	m	struct:tt_Service
+retry	tickle/include/tickle/tickle.h	/^    uint8_t retry;      \/\/ retry count from server side$/;"	m	struct:tt_CallResponseHeader
+retry	tickle/include/tickle/tickle.h	/^    uint8_t retry;   \/\/ retry count from client side$/;"	m	struct:tt_CallRequestHeader
+return_code	tickle/include/tickle/tickle.h	/^    int8_t return_code; \/\/ return code$/;"	m	struct:tt_CallResponseHeader
+rmw_borrow_loaned_message	src/rmw_publisher.c	/^rmw_ret_t rmw_borrow_loaned_message(const rmw_publisher_t* publisher, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_borrow_loaned_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_borrow_loaned_message(const rmw_publisher_t* publisher, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_client	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_client_t rmw_client; \/\/ RMW client structure (must be first)$/;"	m	struct:rmw_tickle_client_t
+rmw_client	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_client_t rmw_client; \/\/ RMW client structure (must be first)$/;"	m	struct:rmw_tickle_client_t
+rmw_client_request_publisher_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_client_request_publisher_get_actual_qos(const rmw_client_t* client, rmw_qos_profile_t* qos) {$/;"	f
+rmw_client_request_publisher_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_client_request_publisher_get_actual_qos(const rmw_client_t* client, rmw_qos_profile_t* qos) {$/;"	f
+rmw_client_response_subscription_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_client_response_subscription_get_actual_qos(const rmw_client_t* client, rmw_qos_profile_t* qos) {$/;"	f
+rmw_client_response_subscription_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_client_response_subscription_get_actual_qos(const rmw_client_t* client, rmw_qos_profile_t* qos) {$/;"	f
+rmw_client_set_on_new_response_callback	src/rmw_callback.c	/^rmw_ret_t rmw_client_set_on_new_response_callback(rmw_client_t* client, rmw_event_callback_t callback,$/;"	f
+rmw_client_set_on_new_response_callback	tickle/rmw_tickle/src/rmw_tickle_c/rmw_callback.c	/^rmw_ret_t rmw_client_set_on_new_response_callback(rmw_client_t* client, rmw_event_callback_t callback,$/;"	f
+rmw_compare_gids	src/rmw_gid.c	/^rmw_ret_t rmw_compare_gids(const rmw_gid_t* gid1, const rmw_gid_t* gid2, int* result) {$/;"	f
+rmw_compare_gids	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_compare_gids(const rmw_gid_t* gid1, const rmw_gid_t* gid2, int* result) {$/;"	f
+rmw_compare_gids_equal	src/rmw_gid.c	/^rmw_ret_t rmw_compare_gids_equal(const rmw_gid_t* gid1, const rmw_gid_t* gid2, bool* result) {$/;"	f
+rmw_compare_gids_equal	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_compare_gids_equal(const rmw_gid_t* gid1, const rmw_gid_t* gid2, bool* result) {$/;"	f
+rmw_context_fini	src/rmw_init.c	/^rmw_ret_t rmw_context_fini(rmw_context_t* context) {$/;"	f
+rmw_context_fini	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_context_fini(rmw_context_t* context) {$/;"	f
+rmw_count_clients	src/rmw_count.c	/^rmw_ret_t rmw_count_clients(const rmw_node_t* node, const char* service_name, size_t* count) {$/;"	f
+rmw_count_clients	tickle/rmw_tickle/src/rmw_tickle_c/rmw_count.c	/^rmw_ret_t rmw_count_clients(const rmw_node_t* node, const char* service_name, size_t* count) {$/;"	f
+rmw_count_publishers	src/rmw_count.c	/^rmw_ret_t rmw_count_publishers(const rmw_node_t* node, const char* topic_name, size_t* count) {$/;"	f
+rmw_count_publishers	tickle/rmw_tickle/src/rmw_tickle_c/rmw_count.c	/^rmw_ret_t rmw_count_publishers(const rmw_node_t* node, const char* topic_name, size_t* count) {$/;"	f
+rmw_count_services	src/rmw_count.c	/^rmw_ret_t rmw_count_services(const rmw_node_t* node, const char* service_name, size_t* count) {$/;"	f
+rmw_count_services	tickle/rmw_tickle/src/rmw_tickle_c/rmw_count.c	/^rmw_ret_t rmw_count_services(const rmw_node_t* node, const char* service_name, size_t* count) {$/;"	f
+rmw_count_subscribers	src/rmw_count.c	/^rmw_ret_t rmw_count_subscribers(const rmw_node_t* node, const char* topic_name, size_t* count) {$/;"	f
+rmw_count_subscribers	tickle/rmw_tickle/src/rmw_tickle_c/rmw_count.c	/^rmw_ret_t rmw_count_subscribers(const rmw_node_t* node, const char* topic_name, size_t* count) {$/;"	f
+rmw_create_client	src/rmw_client.c	/^rmw_client_t* rmw_create_client(const rmw_node_t* node, const rosidl_service_type_support_t* type_support,$/;"	f
+rmw_create_client	tickle/rmw_tickle/src/rmw_tickle_c/rmw_client.c	/^rmw_client_t* rmw_create_client(const rmw_node_t* node, const rosidl_service_type_support_t* type_support,$/;"	f
+rmw_create_guard_condition	src/rmw_guard_condition.c	/^rmw_guard_condition_t* rmw_create_guard_condition(rmw_context_t* context) {$/;"	f
+rmw_create_guard_condition	tickle/rmw_tickle/src/rmw_tickle_c/rmw_guard_condition.c	/^rmw_guard_condition_t* rmw_create_guard_condition(rmw_context_t* context) {$/;"	f
+rmw_create_node	src/rmw_node.c	/^rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char* namespace_) {$/;"	f
+rmw_create_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node.c	/^rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char* namespace_) {$/;"	f
+rmw_create_publisher	src/rmw_publisher.c	/^rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_create_publisher	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_create_service	src/rmw_service.c	/^rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_type_support_t* type_support,$/;"	f
+rmw_create_service	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service.c	/^rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_type_support_t* type_support,$/;"	f
+rmw_create_subscription	src/rmw_subscription.c	/^rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_create_subscription	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_create_wait_set	src/rmw_wait_set.c	/^rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_conditions) {$/;"	f
+rmw_create_wait_set	tickle/rmw_tickle/src/rmw_tickle_c/rmw_wait_set.c	/^rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_conditions) {$/;"	f
+rmw_deserialize	src/rmw_serialize.c	/^rmw_ret_t rmw_deserialize(const rmw_serialized_message_t* serialized_message,$/;"	f
+rmw_deserialize	tickle/rmw_tickle/src/rmw_tickle_c/rmw_serialize.c	/^rmw_ret_t rmw_deserialize(const rmw_serialized_message_t* serialized_message,$/;"	f
+rmw_destroy_client	src/rmw_client.c	/^rmw_ret_t rmw_destroy_client(rmw_node_t* node, rmw_client_t* client) {$/;"	f
+rmw_destroy_client	tickle/rmw_tickle/src/rmw_tickle_c/rmw_client.c	/^rmw_ret_t rmw_destroy_client(rmw_node_t* node, rmw_client_t* client) {$/;"	f
+rmw_destroy_guard_condition	src/rmw_guard_condition.c	/^rmw_ret_t rmw_destroy_guard_condition(rmw_guard_condition_t* guard_condition) {$/;"	f
+rmw_destroy_guard_condition	tickle/rmw_tickle/src/rmw_tickle_c/rmw_guard_condition.c	/^rmw_ret_t rmw_destroy_guard_condition(rmw_guard_condition_t* guard_condition) {$/;"	f
+rmw_destroy_node	src/rmw_node.c	/^rmw_ret_t rmw_destroy_node(rmw_node_t* node) {$/;"	f
+rmw_destroy_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node.c	/^rmw_ret_t rmw_destroy_node(rmw_node_t* node) {$/;"	f
+rmw_destroy_publisher	src/rmw_publisher.c	/^rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {$/;"	f
+rmw_destroy_publisher	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {$/;"	f
+rmw_destroy_service	src/rmw_service.c	/^rmw_ret_t rmw_destroy_service(rmw_node_t* node, rmw_service_t* service) {$/;"	f
+rmw_destroy_service	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service.c	/^rmw_ret_t rmw_destroy_service(rmw_node_t* node, rmw_service_t* service) {$/;"	f
+rmw_destroy_subscription	src/rmw_subscription.c	/^rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscription) {$/;"	f
+rmw_destroy_subscription	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscription) {$/;"	f
+rmw_destroy_wait_set	src/rmw_wait_set.c	/^rmw_ret_t rmw_destroy_wait_set(rmw_wait_set_t* wait_set) {$/;"	f
+rmw_destroy_wait_set	tickle/rmw_tickle/src/rmw_tickle_c/rmw_wait_set.c	/^rmw_ret_t rmw_destroy_wait_set(rmw_wait_set_t* wait_set) {$/;"	f
+rmw_event_set_callback	src/rmw_callback.c	/^rmw_ret_t rmw_event_set_callback(rmw_event_t* event, rmw_event_callback_t callback, const void* user_data) {$/;"	f
+rmw_event_set_callback	tickle/rmw_tickle/src/rmw_tickle_c/rmw_callback.c	/^rmw_ret_t rmw_event_set_callback(rmw_event_t* event, rmw_event_callback_t callback, const void* user_data) {$/;"	f
+rmw_event_type_is_supported	src/rmw_event.c	/^bool rmw_event_type_is_supported(rmw_event_type_t event_type) {$/;"	f
+rmw_event_type_is_supported	tickle/rmw_tickle/src/rmw_tickle_c/rmw_event.c	/^bool rmw_event_type_is_supported(rmw_event_type_t event_type) {$/;"	f
+rmw_feature_supported	src/rmw_features.c	/^bool rmw_feature_supported(rmw_feature_t feature) {$/;"	f
+rmw_feature_supported	tickle/rmw_tickle/src/rmw_tickle_c/rmw_features.c	/^bool rmw_feature_supported(rmw_feature_t feature) {$/;"	f
+rmw_fini_event	src/rmw_event.c	/^rmw_ret_t rmw_fini_event(rmw_event_t* event) {$/;"	f
+rmw_fini_event	tickle/rmw_tickle/src/rmw_tickle_c/rmw_event.c	/^rmw_ret_t rmw_fini_event(rmw_event_t* event) {$/;"	f
+rmw_fini_publisher_allocation	src/rmw_publisher.c	/^rmw_ret_t rmw_fini_publisher_allocation(rmw_publisher_allocation_t* allocation) {$/;"	f
+rmw_fini_publisher_allocation	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_fini_publisher_allocation(rmw_publisher_allocation_t* allocation) {$/;"	f
+rmw_fini_subscription_allocation	src/rmw_subscription.c	/^rmw_ret_t rmw_fini_subscription_allocation(rmw_subscription_allocation_t* allocation) {$/;"	f
+rmw_fini_subscription_allocation	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_fini_subscription_allocation(rmw_subscription_allocation_t* allocation) {$/;"	f
+rmw_get_client_names_and_types_by_node	src/rmw_service_names_and_types_by_node.c	/^rmw_ret_t rmw_get_client_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_client_names_and_types_by_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service_names_and_types_by_node.c	/^rmw_ret_t rmw_get_client_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_gid_for_client	src/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_client(const rmw_client_t* client, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_client	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_client(const rmw_client_t* client, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_publisher	src/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_publisher(const rmw_publisher_t* publisher, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_publisher	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_publisher(const rmw_publisher_t* publisher, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_service	src/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_service(const rmw_service_t* service, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_service	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_service(const rmw_service_t* service, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_subscription	src/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_subscription(const rmw_subscription_t* subscription, rmw_gid_t* gid) {$/;"	f
+rmw_get_gid_for_subscription	tickle/rmw_tickle/src/rmw_tickle_c/rmw_gid.c	/^rmw_ret_t rmw_get_gid_for_subscription(const rmw_subscription_t* subscription, rmw_gid_t* gid) {$/;"	f
+rmw_get_implementation_identifier	src/rmw_get_implementation_identifier.c	/^const char* rmw_get_implementation_identifier() {$/;"	f
+rmw_get_implementation_identifier	tickle/rmw_tickle/src/rmw_tickle_c/rmw_get_implementation_identifier.c	/^const char* rmw_get_implementation_identifier() {$/;"	f
+rmw_get_node_names	src/rmw_node_names.c	/^rmw_ret_t rmw_get_node_names(const rmw_node_t* node, rcutils_string_array_t* node_names,$/;"	f
+rmw_get_node_names	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node_names.c	/^rmw_ret_t rmw_get_node_names(const rmw_node_t* node, rcutils_string_array_t* node_names,$/;"	f
+rmw_get_node_names_with_enclaves	src/rmw_node_names.c	/^rmw_ret_t rmw_get_node_names_with_enclaves(const rmw_node_t* node, rcutils_string_array_t* node_names,$/;"	f
+rmw_get_node_names_with_enclaves	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node_names.c	/^rmw_ret_t rmw_get_node_names_with_enclaves(const rmw_node_t* node, rcutils_string_array_t* node_names,$/;"	f
+rmw_get_publisher_names_and_types_by_node	src/rmw_publisher_names_and_types.c	/^rmw_ret_t rmw_get_publisher_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_publisher_names_and_types_by_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher_names_and_types.c	/^rmw_ret_t rmw_get_publisher_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_publishers_info_by_topic	src/rmw_topic_info.c	/^rmw_ret_t rmw_get_publishers_info_by_topic(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_publishers_info_by_topic	tickle/rmw_tickle/src/rmw_tickle_c/rmw_topic_info.c	/^rmw_ret_t rmw_get_publishers_info_by_topic(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_serialization_format	src/rmw_get_serialization_format.c	/^const char* rmw_get_serialization_format() {$/;"	f
+rmw_get_serialization_format	tickle/rmw_tickle/src/rmw_tickle_c/rmw_get_serialization_format.c	/^const char* rmw_get_serialization_format() {$/;"	f
+rmw_get_serialized_message_size	src/rmw_serialize.c	/^rmw_ret_t rmw_get_serialized_message_size(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_get_serialized_message_size	tickle/rmw_tickle/src/rmw_tickle_c/rmw_serialize.c	/^rmw_ret_t rmw_get_serialized_message_size(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_get_service_names_and_types	src/rmw_topic_names_and_types.c	/^rmw_ret_t rmw_get_service_names_and_types(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_service_names_and_types	tickle/rmw_tickle/src/rmw_tickle_c/rmw_topic_names_and_types.c	/^rmw_ret_t rmw_get_service_names_and_types(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_service_names_and_types_by_node	src/rmw_service_names_and_types_by_node.c	/^rmw_ret_t rmw_get_service_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_service_names_and_types_by_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service_names_and_types_by_node.c	/^rmw_ret_t rmw_get_service_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_subscriber_names_and_types_by_node	src/rmw_publisher_names_and_types.c	/^rmw_ret_t rmw_get_subscriber_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_subscriber_names_and_types_by_node	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher_names_and_types.c	/^rmw_ret_t rmw_get_subscriber_names_and_types_by_node(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_subscriptions_info_by_topic	src/rmw_topic_info.c	/^rmw_ret_t rmw_get_subscriptions_info_by_topic(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_subscriptions_info_by_topic	tickle/rmw_tickle/src/rmw_tickle_c/rmw_topic_info.c	/^rmw_ret_t rmw_get_subscriptions_info_by_topic(const rmw_node_t* node, rcutils_allocator_t* allocator,$/;"	f
+rmw_get_topic_names_and_types	src/rmw_topic_names_and_types.c	/^rmw_ret_t rmw_get_topic_names_and_types(const rmw_node_t* node, rcutils_allocator_t* allocator, bool no_demangle,$/;"	f
+rmw_get_topic_names_and_types	tickle/rmw_tickle/src/rmw_tickle_c/rmw_topic_names_and_types.c	/^rmw_ret_t rmw_get_topic_names_and_types(const rmw_node_t* node, rcutils_allocator_t* allocator, bool no_demangle,$/;"	f
+rmw_guard_condition	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_guard_condition_t rmw_guard_condition; \/\/ RMW guard condition structure (must be first)$/;"	m	struct:rmw_tickle_guard_condition_t
+rmw_guard_condition	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_guard_condition_t rmw_guard_condition; \/\/ RMW guard condition structure (must be first)$/;"	m	struct:rmw_tickle_guard_condition_t
+rmw_init	src/rmw_init.c	/^rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {$/;"	f
+rmw_init	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {$/;"	f
+rmw_init_event	src/rmw_event.c	/^rmw_ret_t rmw_init_event(rmw_event_t* event, const char* implementation_identifier) {$/;"	f
+rmw_init_event	tickle/rmw_tickle/src/rmw_tickle_c/rmw_event.c	/^rmw_ret_t rmw_init_event(rmw_event_t* event, const char* implementation_identifier) {$/;"	f
+rmw_init_options_copy	src/rmw_init.c	/^rmw_ret_t rmw_init_options_copy(const rmw_init_options_t* src, rmw_init_options_t* dst) {$/;"	f
+rmw_init_options_copy	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_init_options_copy(const rmw_init_options_t* src, rmw_init_options_t* dst) {$/;"	f
+rmw_init_options_fini	src/rmw_init.c	/^rmw_ret_t rmw_init_options_fini(rmw_init_options_t* init_options) {$/;"	f
+rmw_init_options_fini	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_init_options_fini(rmw_init_options_t* init_options) {$/;"	f
+rmw_init_options_init	src/rmw_init.c	/^rmw_ret_t rmw_init_options_init(rmw_init_options_t* init_options, rcutils_allocator_t allocator) {$/;"	f
+rmw_init_options_init	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_init_options_init(rmw_init_options_t* init_options, rcutils_allocator_t allocator) {$/;"	f
+rmw_init_publisher_allocation	src/rmw_publisher.c	/^rmw_ret_t rmw_init_publisher_allocation(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_init_publisher_allocation	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_init_publisher_allocation(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_init_subscription_allocation	src/rmw_subscription.c	/^rmw_ret_t rmw_init_subscription_allocation(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_init_subscription_allocation	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_init_subscription_allocation(const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_node	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_node_t rmw_node; \/\/ RMW node structure (must be first)$/;"	m	struct:rmw_tickle_node_t
+rmw_node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_node_t rmw_node; \/\/ RMW node structure (must be first)$/;"	m	struct:rmw_tickle_node_t
+rmw_node_get_graph_guard_condition	src/rmw_node.c	/^const rmw_guard_condition_t* rmw_node_get_graph_guard_condition(const rmw_node_t* node) {$/;"	f
+rmw_node_get_graph_guard_condition	tickle/rmw_tickle/src/rmw_tickle_c/rmw_node.c	/^const rmw_guard_condition_t* rmw_node_get_graph_guard_condition(const rmw_node_t* node) {$/;"	f
+rmw_publish	src/rmw_publisher.c	/^rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,$/;"	f
+rmw_publish	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,$/;"	f
+rmw_publish_loaned_message	src/rmw_publisher.c	/^rmw_ret_t rmw_publish_loaned_message(const rmw_publisher_t* publisher, void* ros_message,$/;"	f
+rmw_publish_loaned_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publish_loaned_message(const rmw_publisher_t* publisher, void* ros_message,$/;"	f
+rmw_publish_serialized_message	src/rmw_publisher.c	/^rmw_ret_t rmw_publish_serialized_message(const rmw_publisher_t* publisher,$/;"	f
+rmw_publish_serialized_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publish_serialized_message(const rmw_publisher_t* publisher,$/;"	f
+rmw_publisher	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_publisher_t rmw_publisher; \/\/ RMW publisher structure (must be first)$/;"	m	struct:rmw_tickle_publisher_t
+rmw_publisher	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_publisher_t rmw_publisher; \/\/ RMW publisher structure (must be first)$/;"	m	struct:rmw_tickle_publisher_t
+rmw_publisher_assert_liveliness	src/rmw_publisher.c	/^rmw_ret_t rmw_publisher_assert_liveliness(const rmw_publisher_t* publisher) {$/;"	f
+rmw_publisher_assert_liveliness	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publisher_assert_liveliness(const rmw_publisher_t* publisher) {$/;"	f
+rmw_publisher_count_matched_subscriptions	src/rmw_publisher.c	/^rmw_ret_t rmw_publisher_count_matched_subscriptions(const rmw_publisher_t* publisher, size_t* subscription_count) {$/;"	f
+rmw_publisher_count_matched_subscriptions	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publisher_count_matched_subscriptions(const rmw_publisher_t* publisher, size_t* subscription_count) {$/;"	f
+rmw_publisher_event_init	src/rmw_publisher.c	/^rmw_ret_t rmw_publisher_event_init(rmw_event_t* event, const rmw_publisher_t* publisher, rmw_event_type_t event_type) {$/;"	f
+rmw_publisher_event_init	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publisher_event_init(rmw_event_t* event, const rmw_publisher_t* publisher, rmw_event_type_t event_type) {$/;"	f
+rmw_publisher_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_publisher_get_actual_qos(const rmw_publisher_t* publisher, rmw_qos_profile_t* qos) {$/;"	f
+rmw_publisher_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_publisher_get_actual_qos(const rmw_publisher_t* publisher, rmw_qos_profile_t* qos) {$/;"	f
+rmw_publisher_get_network_flow_endpoints	src/rmw_network_flow.c	/^rmw_ret_t rmw_publisher_get_network_flow_endpoints(const rmw_publisher_t* publisher, rcutils_allocator_t* allocator,$/;"	f
+rmw_publisher_get_network_flow_endpoints	tickle/rmw_tickle/src/rmw_tickle_c/rmw_network_flow.c	/^rmw_ret_t rmw_publisher_get_network_flow_endpoints(const rmw_publisher_t* publisher, rcutils_allocator_t* allocator,$/;"	f
+rmw_publisher_wait_for_all_acked	src/rmw_publisher.c	/^rmw_ret_t rmw_publisher_wait_for_all_acked(const rmw_publisher_t* publisher, rmw_time_t wait_timeout) {$/;"	f
+rmw_publisher_wait_for_all_acked	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_publisher_wait_for_all_acked(const rmw_publisher_t* publisher, rmw_time_t wait_timeout) {$/;"	f
+rmw_qos_profile_check_compatible	src/rmw_qos_check.c	/^rmw_ret_t rmw_qos_profile_check_compatible(const rmw_qos_profile_t publisher_profile __attribute__((unused)),$/;"	f
+rmw_qos_profile_check_compatible	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos_check.c	/^rmw_ret_t rmw_qos_profile_check_compatible(const rmw_qos_profile_t publisher_profile __attribute__((unused)),$/;"	f
+rmw_return_loaned_message_from_publisher	src/rmw_publisher.c	/^rmw_ret_t rmw_return_loaned_message_from_publisher(const rmw_publisher_t* publisher, void* loaned_message) {$/;"	f
+rmw_return_loaned_message_from_publisher	tickle/rmw_tickle/src/rmw_tickle_c/rmw_publisher.c	/^rmw_ret_t rmw_return_loaned_message_from_publisher(const rmw_publisher_t* publisher, void* loaned_message) {$/;"	f
+rmw_return_loaned_message_from_subscription	src/rmw_subscription.c	/^rmw_ret_t rmw_return_loaned_message_from_subscription(const rmw_subscription_t* subscription, void* loaned_message) {$/;"	f
+rmw_return_loaned_message_from_subscription	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_return_loaned_message_from_subscription(const rmw_subscription_t* subscription, void* loaned_message) {$/;"	f
+rmw_send_request	src/rmw_client.c	/^rmw_ret_t rmw_send_request(const rmw_client_t* client, const void* ros_request, int64_t* sequence_id) {$/;"	f
+rmw_send_request	tickle/rmw_tickle/src/rmw_tickle_c/rmw_client.c	/^rmw_ret_t rmw_send_request(const rmw_client_t* client, const void* ros_request, int64_t* sequence_id) {$/;"	f
+rmw_send_response	src/rmw_service.c	/^rmw_ret_t rmw_send_response(const rmw_service_t* service, rmw_request_id_t* request_id, void* ros_response) {$/;"	f
+rmw_send_response	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service.c	/^rmw_ret_t rmw_send_response(const rmw_service_t* service, rmw_request_id_t* request_id, void* ros_response) {$/;"	f
+rmw_serialization_support_fini	src/rmw_serialization_support.c	/^rmw_ret_t rmw_serialization_support_fini(rosidl_dynamic_typesupport_serialization_support_t* serialization_support,$/;"	f
+rmw_serialization_support_fini	tickle/rmw_tickle/src/rmw_tickle_c/rmw_serialization_support.c	/^rmw_ret_t rmw_serialization_support_fini(rosidl_dynamic_typesupport_serialization_support_t* serialization_support,$/;"	f
+rmw_serialization_support_init	src/rmw_serialization_support.c	/^rmw_ret_t rmw_serialization_support_init(const char* serialization_lib_name, rcutils_allocator_t* allocator,$/;"	f
+rmw_serialization_support_init	tickle/rmw_tickle/src/rmw_tickle_c/rmw_serialization_support.c	/^rmw_ret_t rmw_serialization_support_init(const char* serialization_lib_name, rcutils_allocator_t* allocator,$/;"	f
+rmw_serialize	src/rmw_serialize.c	/^rmw_ret_t rmw_serialize(const void* ros_message, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_serialize	tickle/rmw_tickle/src/rmw_tickle_c/rmw_serialize.c	/^rmw_ret_t rmw_serialize(const void* ros_message, const rosidl_message_type_support_t* type_support,$/;"	f
+rmw_service	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_service_t rmw_service; \/\/ RMW service structure (must be first)$/;"	m	struct:rmw_tickle_service_t
+rmw_service	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_service_t rmw_service; \/\/ RMW service structure (must be first)$/;"	m	struct:rmw_tickle_service_t
+rmw_service_request_subscription_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_service_request_subscription_get_actual_qos(const rmw_service_t* service, rmw_qos_profile_t* qos) {$/;"	f
+rmw_service_request_subscription_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_service_request_subscription_get_actual_qos(const rmw_service_t* service, rmw_qos_profile_t* qos) {$/;"	f
+rmw_service_response_publisher_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_service_response_publisher_get_actual_qos(const rmw_service_t* service, rmw_qos_profile_t* qos) {$/;"	f
+rmw_service_response_publisher_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_service_response_publisher_get_actual_qos(const rmw_service_t* service, rmw_qos_profile_t* qos) {$/;"	f
+rmw_service_server_is_available	src/rmw_service.c	/^rmw_ret_t rmw_service_server_is_available(const rmw_node_t* node, const rmw_client_t* client, bool* is_available) {$/;"	f
+rmw_service_server_is_available	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service.c	/^rmw_ret_t rmw_service_server_is_available(const rmw_node_t* node, const rmw_client_t* client, bool* is_available) {$/;"	f
+rmw_service_set_on_new_request_callback	src/rmw_callback.c	/^rmw_ret_t rmw_service_set_on_new_request_callback(rmw_service_t* service, rmw_event_callback_t callback,$/;"	f
+rmw_service_set_on_new_request_callback	tickle/rmw_tickle/src/rmw_tickle_c/rmw_callback.c	/^rmw_ret_t rmw_service_set_on_new_request_callback(rmw_service_t* service, rmw_event_callback_t callback,$/;"	f
+rmw_set_log_severity	src/rmw_logging.c	/^rmw_ret_t rmw_set_log_severity(rmw_log_severity_t severity) {$/;"	f
+rmw_set_log_severity	tickle/rmw_tickle/src/rmw_tickle_c/rmw_logging.c	/^rmw_ret_t rmw_set_log_severity(rmw_log_severity_t severity) {$/;"	f
+rmw_shutdown	src/rmw_init.c	/^rmw_ret_t rmw_shutdown(rmw_context_t* context) {$/;"	f
+rmw_shutdown	tickle/rmw_tickle/src/rmw_tickle_c/rmw_init.c	/^rmw_ret_t rmw_shutdown(rmw_context_t* context) {$/;"	f
+rmw_subscription	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_subscription_t rmw_subscription; \/\/ RMW subscription structure (must be first)$/;"	m	struct:rmw_tickle_subscriber_t
+rmw_subscription	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_subscription_t rmw_subscription; \/\/ RMW subscription structure (must be first)$/;"	m	struct:rmw_tickle_subscriber_t
+rmw_subscription_count_matched_publishers	src/rmw_subscription.c	/^rmw_ret_t rmw_subscription_count_matched_publishers(const rmw_subscription_t* subscription, size_t* publisher_count) {$/;"	f
+rmw_subscription_count_matched_publishers	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_subscription_count_matched_publishers(const rmw_subscription_t* subscription, size_t* publisher_count) {$/;"	f
+rmw_subscription_event_init	src/rmw_subscription.c	/^rmw_ret_t rmw_subscription_event_init(rmw_event_t* event, const rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_event_init	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_subscription_event_init(rmw_event_t* event, const rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_get_actual_qos	src/rmw_qos.c	/^rmw_ret_t rmw_subscription_get_actual_qos(const rmw_subscription_t* subscription, rmw_qos_profile_t* qos) {$/;"	f
+rmw_subscription_get_actual_qos	tickle/rmw_tickle/src/rmw_tickle_c/rmw_qos.c	/^rmw_ret_t rmw_subscription_get_actual_qos(const rmw_subscription_t* subscription, rmw_qos_profile_t* qos) {$/;"	f
+rmw_subscription_get_content_filter	src/rmw_subscription.c	/^rmw_ret_t rmw_subscription_get_content_filter(const rmw_subscription_t* subscription, rcutils_allocator_t* allocator,$/;"	f
+rmw_subscription_get_content_filter	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_subscription_get_content_filter(const rmw_subscription_t* subscription, rcutils_allocator_t* allocator,$/;"	f
+rmw_subscription_get_network_flow_endpoints	src/rmw_network_flow.c	/^rmw_ret_t rmw_subscription_get_network_flow_endpoints(const rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_get_network_flow_endpoints	tickle/rmw_tickle/src/rmw_tickle_c/rmw_network_flow.c	/^rmw_ret_t rmw_subscription_get_network_flow_endpoints(const rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_set_content_filter	src/rmw_subscription.c	/^rmw_ret_t rmw_subscription_set_content_filter(rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_set_content_filter	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_subscription_set_content_filter(rmw_subscription_t* subscription,$/;"	f
+rmw_subscription_set_on_new_message_callback	src/rmw_callback.c	/^rmw_ret_t rmw_subscription_set_on_new_message_callback(rmw_subscription_t* subscription, rmw_event_callback_t callback,$/;"	f
+rmw_subscription_set_on_new_message_callback	tickle/rmw_tickle/src/rmw_tickle_c/rmw_callback.c	/^rmw_ret_t rmw_subscription_set_on_new_message_callback(rmw_subscription_t* subscription, rmw_event_callback_t callback,$/;"	f
+rmw_take	src/rmw_subscription.c	/^rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bool* taken,$/;"	f
+rmw_take	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bool* taken,$/;"	f
+rmw_take_dynamic_message	src/rmw_dynamic_message.c	/^rmw_ret_t rmw_take_dynamic_message(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_dynamic_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_dynamic_message.c	/^rmw_ret_t rmw_take_dynamic_message(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_dynamic_message_with_info	src/rmw_dynamic_message.c	/^rmw_ret_t rmw_take_dynamic_message_with_info(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_dynamic_message_with_info	tickle/rmw_tickle/src/rmw_tickle_c/rmw_dynamic_message.c	/^rmw_ret_t rmw_take_dynamic_message_with_info(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_event	src/rmw_event_handling.c	/^rmw_ret_t rmw_take_event(const rmw_event_t* event_handle, void* event_info, bool* taken) {$/;"	f
+rmw_take_event	tickle/rmw_tickle/src/rmw_tickle_c/rmw_event_handling.c	/^rmw_ret_t rmw_take_event(const rmw_event_t* event_handle, void* event_info, bool* taken) {$/;"	f
+rmw_take_loaned_message	src/rmw_subscription.c	/^rmw_ret_t rmw_take_loaned_message(const rmw_subscription_t* subscription, void** ros_message, bool* taken,$/;"	f
+rmw_take_loaned_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take_loaned_message(const rmw_subscription_t* subscription, void** ros_message, bool* taken,$/;"	f
+rmw_take_loaned_message_with_info	src/rmw_subscription.c	/^rmw_ret_t rmw_take_loaned_message_with_info(const rmw_subscription_t* subscription, void** ros_message, bool* taken,$/;"	f
+rmw_take_loaned_message_with_info	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take_loaned_message_with_info(const rmw_subscription_t* subscription, void** ros_message, bool* taken,$/;"	f
+rmw_take_request	src/rmw_service.c	/^rmw_ret_t rmw_take_request(const rmw_service_t* service, rmw_service_info_t* request_header, void* ros_request,$/;"	f
+rmw_take_request	tickle/rmw_tickle/src/rmw_tickle_c/rmw_service.c	/^rmw_ret_t rmw_take_request(const rmw_service_t* service, rmw_service_info_t* request_header, void* ros_request,$/;"	f
+rmw_take_response	src/rmw_client.c	/^rmw_ret_t rmw_take_response(const rmw_client_t* client, rmw_service_info_t* request_header, void* ros_response,$/;"	f
+rmw_take_response	tickle/rmw_tickle/src/rmw_tickle_c/rmw_client.c	/^rmw_ret_t rmw_take_response(const rmw_client_t* client, rmw_service_info_t* request_header, void* ros_response,$/;"	f
+rmw_take_serialized_message	src/rmw_subscription.c	/^rmw_ret_t rmw_take_serialized_message(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_serialized_message	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take_serialized_message(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_serialized_message_with_info	src/rmw_subscription.c	/^rmw_ret_t rmw_take_serialized_message_with_info(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_serialized_message_with_info	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take_serialized_message_with_info(const rmw_subscription_t* subscription,$/;"	f
+rmw_take_with_info	src/rmw_subscription.c	/^rmw_ret_t rmw_take_with_info(const rmw_subscription_t* subscription, void* ros_message, bool* taken,$/;"	f
+rmw_take_with_info	tickle/rmw_tickle/src/rmw_tickle_c/rmw_subscription.c	/^rmw_ret_t rmw_take_with_info(const rmw_subscription_t* subscription, void* ros_message, bool* taken,$/;"	f
+rmw_tickle_client_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_client_t {$/;"	s
+rmw_tickle_client_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_client_t;$/;"	t	typeref:struct:rmw_tickle_client_t
+rmw_tickle_client_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_client_t {$/;"	s
+rmw_tickle_client_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_client_t;$/;"	t	typeref:struct:rmw_tickle_client_t
+rmw_tickle_context_impl_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_context_impl_t {$/;"	s
+rmw_tickle_context_impl_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_context_impl_t;$/;"	t	typeref:struct:rmw_tickle_context_impl_t
+rmw_tickle_context_impl_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_context_impl_t {$/;"	s
+rmw_tickle_context_impl_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_context_impl_t;$/;"	t	typeref:struct:rmw_tickle_context_impl_t
+rmw_tickle_guard_condition_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_guard_condition_t {$/;"	s
+rmw_tickle_guard_condition_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_guard_condition_t;$/;"	t	typeref:struct:rmw_tickle_guard_condition_t
+rmw_tickle_guard_condition_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_guard_condition_t {$/;"	s
+rmw_tickle_guard_condition_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_guard_condition_t;$/;"	t	typeref:struct:rmw_tickle_guard_condition_t
+rmw_tickle_identifier	src/identifiers.c	/^const char* const rmw_tickle_identifier = RMW_TICKLE_IDENTIFIER;$/;"	v
+rmw_tickle_identifier	tickle/rmw_tickle/src/rmw_tickle_c/identifiers.c	/^const char* const rmw_tickle_identifier = RMW_TICKLE_IDENTIFIER;$/;"	v
+rmw_tickle_node_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_node_t {$/;"	s
+rmw_tickle_node_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_node_t;$/;"	t	typeref:struct:rmw_tickle_node_t
+rmw_tickle_node_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_node_t {$/;"	s
+rmw_tickle_node_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_node_t;$/;"	t	typeref:struct:rmw_tickle_node_t
+rmw_tickle_publisher_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_publisher_t {$/;"	s
+rmw_tickle_publisher_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_publisher_t;$/;"	t	typeref:struct:rmw_tickle_publisher_t
+rmw_tickle_publisher_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_publisher_t {$/;"	s
+rmw_tickle_publisher_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_publisher_t;$/;"	t	typeref:struct:rmw_tickle_publisher_t
+rmw_tickle_serialization_format	src/identifiers.c	/^const char* const rmw_tickle_serialization_format = RMW_TICKLE_SERIALIZATION_FORMAT;$/;"	v
+rmw_tickle_serialization_format	tickle/rmw_tickle/src/rmw_tickle_c/identifiers.c	/^const char* const rmw_tickle_serialization_format = RMW_TICKLE_SERIALIZATION_FORMAT;$/;"	v
+rmw_tickle_service_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_service_t {$/;"	s
+rmw_tickle_service_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_service_t;$/;"	t	typeref:struct:rmw_tickle_service_t
+rmw_tickle_service_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_service_t {$/;"	s
+rmw_tickle_service_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_service_t;$/;"	t	typeref:struct:rmw_tickle_service_t
+rmw_tickle_subscriber_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_subscriber_t {$/;"	s
+rmw_tickle_subscriber_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_subscriber_t;$/;"	t	typeref:struct:rmw_tickle_subscriber_t
+rmw_tickle_subscriber_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_subscriber_t {$/;"	s
+rmw_tickle_subscriber_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_subscriber_t;$/;"	t	typeref:struct:rmw_tickle_subscriber_t
+rmw_tickle_wait_set_t	include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_wait_set_t {$/;"	s
+rmw_tickle_wait_set_t	include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_wait_set_t;$/;"	t	typeref:struct:rmw_tickle_wait_set_t
+rmw_tickle_wait_set_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^typedef struct rmw_tickle_wait_set_t {$/;"	s
+rmw_tickle_wait_set_t	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^} rmw_tickle_wait_set_t;$/;"	t	typeref:struct:rmw_tickle_wait_set_t
+rmw_trigger_guard_condition	src/rmw_guard_condition.c	/^rmw_ret_t rmw_trigger_guard_condition(const rmw_guard_condition_t* guard_condition) {$/;"	f
+rmw_trigger_guard_condition	tickle/rmw_tickle/src/rmw_tickle_c/rmw_guard_condition.c	/^rmw_ret_t rmw_trigger_guard_condition(const rmw_guard_condition_t* guard_condition) {$/;"	f
+rmw_wait	src/rmw_wait_set.c	/^rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* guard_conditions,$/;"	f
+rmw_wait	tickle/rmw_tickle/src/rmw_tickle_c/rmw_wait_set.c	/^rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* guard_conditions,$/;"	f
+rmw_wait_set	include/rmw_tickle_c/rmw_tickle.h	/^    rmw_wait_set_t rmw_wait_set; \/\/ RMW wait set structure (must be first)$/;"	m	struct:rmw_tickle_wait_set_t
+rmw_wait_set	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    rmw_wait_set_t rmw_wait_set; \/\/ RMW wait set structure (must be first)$/;"	m	struct:rmw_tickle_wait_set_t
+rollback	tickle/src/tickle.c	/^static void rollback(struct tt_Node* node, struct tt_SubmessageHeader* submessage_header) {$/;"	f	file:
+scheduler	tickle/include/tickle/tickle.h	/^    struct tt_TCB scheduler[tt_MAX_SCHEDULER_LENGTH];$/;"	m	struct:tt_Node	typeref:struct:tt_Node::tt_TCB
+scheduler_tail	tickle/include/tickle/tickle.h	/^    int32_t scheduler_tail;$/;"	m	struct:tt_Node
+seq_no	tickle/include/tickle/tickle.h	/^    uint16_t seq_no;    \/\/ sequence number$/;"	m	struct:tt_CallResponseHeader
+seq_no	tickle/include/tickle/tickle.h	/^    uint16_t seq_no; \/\/ sequence number$/;"	m	struct:tt_CallRequestHeader
+seq_no	tickle/include/tickle/tickle.h	/^    uint16_t seq_no;$/;"	m	struct:tt_Client
+seq_no	tickle/include/tickle/tickle.h	/^    uint16_t seq_no;$/;"	m	struct:tt_Publisher
+seq_no	tickle/include/tickle/tickle.h	/^    uint16_t seq_no;$/;"	m	struct:tt_Subscriber
+seq_no	tickle/include/tickle/tickle.h	/^    uint32_t seq_no;$/;"	m	struct:tt_AckNackHeader
+seq_no	tickle/include/tickle/tickle.h	/^    uint32_t seq_no;$/;"	m	struct:tt_DataHeader
+server	tickle/src/tickle.c	/^    struct tt_Server* server;$/;"	m	struct:server_cache_clean_config	typeref:struct:server_cache_clean_config::tt_Server	file:
+server_cache_clean	tickle/src/tickle.c	/^static void server_cache_clean(struct tt_Node* node, uint64_t time, void* param) {$/;"	f	file:
+server_cache_clean_config	tickle/src/tickle.c	/^struct server_cache_clean_config {$/;"	s	file:
+service	tickle/include/tickle/tickle.h	/^    struct tt_Service* service;$/;"	m	struct:tt_Client	typeref:struct:tt_Client::tt_Service
+service	tickle/include/tickle/tickle.h	/^    struct tt_Service* service;$/;"	m	struct:tt_Server	typeref:struct:tt_Server::tt_Service
+set_bool_callback	tickle/examples/set_bool/client.c	/^static void set_bool_callback(struct tt_Client* client, int8_t return_code, struct SetBoolResponse* response) {$/;"	f	file:
+set_bool_callback	tickle/examples/set_bool/server.c	/^static int8_t set_bool_callback(struct tt_Server* server, struct SetBoolRequest* request,$/;"	f	file:
+set_server_cache	tickle/src/tickle.c	/^static bool set_server_cache(struct tt_Server* server, struct tt_SubmessageHeader* submessage_header,$/;"	f	file:
+sock	tickle/include/tickle/hal_generic.h	/^    int sock;$/;"	m	struct:tt_hal
+sock	tickle/include/tickle/hal_linux.h	/^    int sock;$/;"	m	struct:tt_hal
+source	tickle/include/tickle/tickle.h	/^    uint8_t source;  \/\/ Sender ID$/;"	m	struct:tt_Header
+start_encode	tickle/src/tickle.c	/^static struct tt_SubmessageHeader* start_encode(struct tt_Node* node, uint8_t type, uint8_t receiver) {$/;"	f	file:
+subscription_	tickle/test_tickle_rmw.cpp	/^    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;$/;"	m	class:TickLETestNode	file:
+success	tickle/examples/set_bool/SetBool.h	/^    bool success;$/;"	m	struct:SetBoolResponse
+super	tickle/include/tickle/tickle.h	/^    struct tt_Endpoint super;$/;"	m	struct:tt_Client	typeref:struct:tt_Client::tt_Endpoint
+super	tickle/include/tickle/tickle.h	/^    struct tt_Endpoint super;$/;"	m	struct:tt_Publisher	typeref:struct:tt_Publisher::tt_Endpoint
+super	tickle/include/tickle/tickle.h	/^    struct tt_Endpoint super;$/;"	m	struct:tt_Server	typeref:struct:tt_Server::tt_Endpoint
+super	tickle/include/tickle/tickle.h	/^    struct tt_Endpoint super;$/;"	m	struct:tt_Subscriber	typeref:struct:tt_Subscriber::tt_Endpoint
+tickle_client	include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Client tickle_client;$/;"	m	struct:rmw_tickle_client_t	typeref:struct:rmw_tickle_client_t::tt_Client
+tickle_client	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Client tickle_client;$/;"	m	struct:rmw_tickle_client_t	typeref:struct:rmw_tickle_client_t::tt_Client
+tickle_error	tickle/include/tickle/hal.h	/^enum tickle_error {$/;"	g
+tickle_node	include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Node tickle_node;$/;"	m	struct:rmw_tickle_node_t	typeref:struct:rmw_tickle_node_t::tt_Node
+tickle_node	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Node tickle_node;$/;"	m	struct:rmw_tickle_node_t	typeref:struct:rmw_tickle_node_t::tt_Node
+tickle_publisher	include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Publisher tickle_publisher;$/;"	m	struct:rmw_tickle_publisher_t	typeref:struct:rmw_tickle_publisher_t::tt_Publisher
+tickle_publisher	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Publisher tickle_publisher;$/;"	m	struct:rmw_tickle_publisher_t	typeref:struct:rmw_tickle_publisher_t::tt_Publisher
+tickle_server	include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Server tickle_server;$/;"	m	struct:rmw_tickle_service_t	typeref:struct:rmw_tickle_service_t::tt_Server
+tickle_server	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Server tickle_server;$/;"	m	struct:rmw_tickle_service_t	typeref:struct:rmw_tickle_service_t::tt_Server
+tickle_subscriber	include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Subscriber tickle_subscriber;$/;"	m	struct:rmw_tickle_subscriber_t	typeref:struct:rmw_tickle_subscriber_t::tt_Subscriber
+tickle_subscriber	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    struct tt_Subscriber tickle_subscriber;$/;"	m	struct:rmw_tickle_subscriber_t	typeref:struct:rmw_tickle_subscriber_t::tt_Subscriber
+time	tickle/include/tickle/tickle.h	/^    uint64_t time;$/;"	m	struct:tt_TCB
+timer_	tickle/test_tickle_rmw.cpp	/^    rclcpp::TimerBase::SharedPtr timer_;$/;"	m	class:TickLETestNode	file:
+timer_callback	tickle/test_tickle_rmw.cpp	/^    void timer_callback() {$/;"	f	class:TickLETestNode	file:
+timestamp	tickle/include/tickle/tickle.h	/^    uint64_t timestamp;$/;"	m	struct:tt_DataHeader
+topic	tickle/include/tickle/tickle.h	/^    struct tt_Topic* topic;$/;"	m	struct:tt_Publisher	typeref:struct:tt_Publisher::tt_Topic
+topic	tickle/include/tickle/tickle.h	/^    struct tt_Topic* topic;$/;"	m	struct:tt_Subscriber	typeref:struct:tt_Subscriber::tt_Topic
+topic_callback	tickle/test_tickle_rmw.cpp	/^    void topic_callback(const std_msgs::msg::String::SharedPtr msg) {$/;"	f	class:TickLETestNode	file:
+tt_AckNackHeader	tickle/include/tickle/tickle.h	/^struct tt_AckNackHeader {$/;"	s
+tt_CALL_RETRY_COUNT	tickle/include/tickle/config.h	13;"	d
+tt_CALL_RETRY_INTERVAL	tickle/include/tickle/config.h	12;"	d
+tt_CANNOT_BIND_SOCKET	tickle/include/tickle/hal.h	/^    tt_CANNOT_BIND_SOCKET = -7,$/;"	e	enum:tickle_error
+tt_CANNOT_CREATE_SOCK	tickle/include/tickle/hal.h	/^    tt_CANNOT_CREATE_SOCK = -3,$/;"	e	enum:tickle_error
+tt_CANNOT_SET_BROADCAST	tickle/include/tickle/hal.h	/^    tt_CANNOT_SET_BROADCAST = -5,$/;"	e	enum:tickle_error
+tt_CANNOT_SET_REUSEADDR	tickle/include/tickle/hal.h	/^    tt_CANNOT_SET_REUSEADDR = -4,$/;"	e	enum:tickle_error
+tt_CANNOT_SET_TIMEOUT	tickle/include/tickle/hal.h	/^    tt_CANNOT_SET_TIMEOUT = -6,$/;"	e	enum:tickle_error
+tt_CLIENT_CALLBACK	tickle/include/tickle/tickle.h	/^typedef void (*tt_CLIENT_CALLBACK)(struct tt_Client* client, int8_t return_code, struct tt_Response* response);$/;"	t
+tt_CallRequestHeader	tickle/include/tickle/tickle.h	/^struct tt_CallRequestHeader {$/;"	s
+tt_CallResponseHeader	tickle/include/tickle/tickle.h	/^struct tt_CallResponseHeader {$/;"	s
+tt_Client	tickle/include/tickle/tickle.h	/^struct tt_Client { \/\/ extends Endpoint$/;"	s
+tt_Client_call	tickle/src/tickle.c	/^int32_t tt_Client_call(struct tt_Client* client, struct tt_Request* request) {$/;"	f
+tt_Client_destroy	tickle/src/tickle.c	/^int32_t tt_Client_destroy(struct tt_Client* client) {$/;"	f
+tt_DATA_DECODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_DATA_DECODE)(struct tt_Data* data, const uint8_t* payload, const uint32_t len,$/;"	t
+tt_DATA_ENCODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_DATA_ENCODE)(struct tt_Data* data, uint8_t* payload, const uint32_t len);$/;"	t
+tt_DATA_ENCODE_SIZE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_DATA_ENCODE_SIZE)(struct tt_Data* data);$/;"	t
+tt_DATA_FREE	tickle/include/tickle/tickle.h	/^typedef void (*tt_DATA_FREE)(struct tt_Data* data);$/;"	t
+tt_Data	tickle/include/tickle/tickle.h	/^struct tt_Data {};$/;"	s
+tt_DataHeader	tickle/include/tickle/tickle.h	/^struct tt_DataHeader {$/;"	s
+tt_ERROR_NONE	tickle/include/tickle/hal.h	/^    tt_ERROR_NONE = 0,$/;"	e	enum:tickle_error
+tt_Endpoint	tickle/include/tickle/tickle.h	/^struct tt_Endpoint {$/;"	s
+tt_Header	tickle/include/tickle/tickle.h	/^struct tt_Header {$/;"	s
+tt_KIND_NONE	tickle/include/tickle/tickle.h	9;"	d
+tt_KIND_RECEIVER	tickle/include/tickle/tickle.h	13;"	d
+tt_KIND_SENDER	tickle/include/tickle/tickle.h	12;"	d
+tt_KIND_SERVICE	tickle/include/tickle/tickle.h	11;"	d
+tt_KIND_SERVICE_CLIENT	tickle/include/tickle/tickle.h	16;"	d
+tt_KIND_SERVICE_SERVER	tickle/include/tickle/tickle.h	17;"	d
+tt_KIND_TOPIC	tickle/include/tickle/tickle.h	10;"	d
+tt_KIND_TOPIC_PUBLISHER	tickle/include/tickle/tickle.h	15;"	d
+tt_KIND_TOPIC_SUBSCRIBER	tickle/include/tickle/tickle.h	14;"	d
+tt_LogLevel	tickle/src/log.h	/^typedef enum { TT_LOG_DEBUG = 0, TT_LOG_INFO = 1, TT_LOG_WARNING = 2, TT_LOG_ERROR = 3, TT_LOG_NONE = 4 } tt_LogLevel;$/;"	t	typeref:enum:__anon1
+tt_MAX_BUFFER_LENGTH	tickle/include/tickle/config.h	19;"	d
+tt_MAX_ENDPOINT_COUNT	tickle/include/tickle/config.h	16;"	d
+tt_MAX_NAME_LENGTH	tickle/include/tickle/config.h	17;"	d
+tt_MAX_SCHEDULER_LENGTH	tickle/include/tickle/config.h	20;"	d
+tt_MAX_SERVER_CACHE_COUNT	tickle/include/tickle/config.h	21;"	d
+tt_MAX_STRING_LENGTH	tickle/include/tickle/config.h	18;"	d
+tt_MICROSECOND	tickle/include/tickle/config.h	5;"	d
+tt_MILLISECOND	tickle/include/tickle/config.h	4;"	d
+tt_NODE_CYCLE	tickle/include/tickle/config.h	7;"	d
+tt_NODE_TX_INTERVAL	tickle/include/tickle/config.h	9;"	d
+tt_NODE_UPDATE_INTERVAL	tickle/include/tickle/config.h	8;"	d
+tt_Node	tickle/include/tickle/tickle.h	/^struct tt_Node {$/;"	s
+tt_Node_create	tickle/src/tickle.c	/^int32_t tt_Node_create(struct tt_Node* node) {$/;"	f
+tt_Node_create_client	tickle/src/tickle.c	/^int32_t tt_Node_create_client(struct tt_Node* node, struct tt_Client* client, struct tt_Service* service,$/;"	f
+tt_Node_create_publisher	tickle/src/tickle.c	/^int32_t tt_Node_create_publisher(struct tt_Node* node, struct tt_Publisher* pub, struct tt_Topic* topic,$/;"	f
+tt_Node_create_server	tickle/src/tickle.c	/^int32_t tt_Node_create_server(struct tt_Node* node, struct tt_Server* server, struct tt_Service* service,$/;"	f
+tt_Node_create_subscriber	tickle/src/tickle.c	/^int32_t tt_Node_create_subscriber(struct tt_Node* node, struct tt_Subscriber* sub, struct tt_Topic* topic,$/;"	f
+tt_Node_destroy	tickle/src/tickle.c	/^int32_t tt_Node_destroy(struct tt_Node* node) {$/;"	f
+tt_Node_poll	tickle/src/tickle.c	/^int32_t tt_Node_poll(struct tt_Node* node) {$/;"	f
+tt_Node_schedule	tickle/src/tickle.c	/^bool tt_Node_schedule(struct tt_Node* node, uint64_t time,$/;"	f
+tt_PROTOCOL_ACKNACK	tickle/include/tickle/tickle.h	210;"	d
+tt_PROTOCOL_DATA	tickle/include/tickle/tickle.h	209;"	d
+tt_PROTOCOL_UPDATE	tickle/include/tickle/tickle.h	208;"	d
+tt_Publisher	tickle/include/tickle/tickle.h	/^struct tt_Publisher { \/\/ extends Endpoint$/;"	s
+tt_Publisher_destroy	tickle/src/tickle.c	/^int32_t tt_Publisher_destroy(struct tt_Publisher* pub) {$/;"	f
+tt_Publisher_publish	tickle/src/tickle.c	/^int32_t tt_Publisher_publish(struct tt_Publisher* pub, struct tt_Data* data) {$/;"	f
+tt_RELIABLE_DEADLINE	tickle/include/tickle/config.h	10;"	d
+tt_RELIABLE_RETRY	tickle/include/tickle/config.h	11;"	d
+tt_REQUEST_DECODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_REQUEST_DECODE)(struct tt_Request* request, const uint8_t* payload, const uint32_t len,$/;"	t
+tt_REQUEST_ENCODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_REQUEST_ENCODE)(struct tt_Request* request, uint8_t* payload, const uint32_t len);$/;"	t
+tt_REQUEST_ENCODE_SIZE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_REQUEST_ENCODE_SIZE)(struct tt_Request* request);$/;"	t
+tt_REQUEST_FREE	tickle/include/tickle/tickle.h	/^typedef void (*tt_REQUEST_FREE)(struct tt_Request* request);$/;"	t
+tt_RESPONSE_DECODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_RESPONSE_DECODE)(struct tt_Response* response, const uint8_t* payload, const uint32_t len,$/;"	t
+tt_RESPONSE_ENCODE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_RESPONSE_ENCODE)(struct tt_Response* response, uint8_t* payload, const uint32_t len);$/;"	t
+tt_RESPONSE_ENCODE_SIZE	tickle/include/tickle/tickle.h	/^typedef int32_t (*tt_RESPONSE_ENCODE_SIZE)(struct tt_Response* response);$/;"	t
+tt_RESPONSE_FREE	tickle/include/tickle/tickle.h	/^typedef void (*tt_RESPONSE_FREE)(struct tt_Response* response);$/;"	t
+tt_Request	tickle/include/tickle/tickle.h	/^struct tt_Request {};$/;"	s
+tt_Response	tickle/include/tickle/tickle.h	/^struct tt_Response {};$/;"	s
+tt_SECOND	tickle/include/tickle/config.h	3;"	d
+tt_SERVER_CACHE_TIMEOUT	tickle/include/tickle/config.h	14;"	d
+tt_SERVER_CALLBACK	tickle/include/tickle/tickle.h	/^typedef int8_t (*tt_SERVER_CALLBACK)(struct tt_Server* server, struct tt_Request* request,$/;"	t
+tt_SUBMESSAGE_ID_ALL	tickle/include/tickle/tickle.h	221;"	d
+tt_SUBMESSAGE_TYPE_ACKNACK	tickle/include/tickle/tickle.h	225;"	d
+tt_SUBMESSAGE_TYPE_CALLREQUEST	tickle/include/tickle/tickle.h	226;"	d
+tt_SUBMESSAGE_TYPE_CALLRESPONSE	tickle/include/tickle/tickle.h	227;"	d
+tt_SUBMESSAGE_TYPE_DATA	tickle/include/tickle/tickle.h	224;"	d
+tt_SUBMESSAGE_TYPE_UPDATE	tickle/include/tickle/tickle.h	223;"	d
+tt_SUBSCRIBER_CALLBACK	tickle/include/tickle/tickle.h	/^typedef void (*tt_SUBSCRIBER_CALLBACK)(struct tt_Subscriber* subscriber, uint64_t time, uint16_t seq_no,$/;"	t
+tt_Server	tickle/include/tickle/tickle.h	/^struct tt_Server { \/\/ extends Endpoint$/;"	s
+tt_Server_destroy	tickle/src/tickle.c	/^int32_t tt_Server_destroy(struct tt_Server* server) {$/;"	f
+tt_Service	tickle/include/tickle/tickle.h	/^struct tt_Service {$/;"	s
+tt_SubmessageHeader	tickle/include/tickle/tickle.h	/^struct tt_SubmessageHeader {$/;"	s
+tt_Subscriber	tickle/include/tickle/tickle.h	/^struct tt_Subscriber { \/\/ extends Endpoint$/;"	s
+tt_Subscriber_destroy	tickle/src/tickle.c	/^int32_t tt_Subscriber_destroy(struct tt_Subscriber* sub) {$/;"	f
+tt_TCB	tickle/include/tickle/tickle.h	/^struct tt_TCB {$/;"	s
+tt_Topic	tickle/include/tickle/tickle.h	/^struct tt_Topic {$/;"	s
+tt_UpdateEntity	tickle/include/tickle/tickle.h	/^struct tt_UpdateEntity {$/;"	s
+tt_UpdateHeader	tickle/include/tickle/tickle.h	/^struct tt_UpdateHeader {$/;"	s
+tt_VERSION	tickle/include/tickle/tickle.h	207;"	d
+tt_bind	tickle/src/hal_linux.c	/^int32_t tt_bind(struct tt_Node* node) {$/;"	f
+tt_close	tickle/src/hal_linux.c	/^void tt_close(struct tt_Node* node) {$/;"	f
+tt_current_log_level	tickle/src/log.c	/^tt_LogLevel tt_current_log_level = TT_LOG_INFO;$/;"	v
+tt_decode_buffer	tickle/src/encoding.c	/^void* tt_decode_buffer(void* buffer, uint32_t* head, uint32_t tail, uint32_t length) {$/;"	f
+tt_decode_string	tickle/src/encoding.c	/^bool tt_decode_string(void* buffer, uint32_t* head, uint32_t tail, uint16_t* str_len, char** str) {$/;"	f
+tt_encode_buffer	tickle/src/encoding.c	/^void* tt_encode_buffer(void* buffer, uint32_t* tail, uint32_t len) {$/;"	f
+tt_encode_string	tickle/src/encoding.c	/^bool tt_encode_string(void* buffer, uint32_t* tail, uint32_t buffer_size, const char* str) {$/;"	f
+tt_get_node_id	tickle/src/hal_linux.c	/^int32_t tt_get_node_id() {$/;"	f
+tt_get_ns	tickle/src/hal_linux.c	/^uint64_t tt_get_ns() {$/;"	f
+tt_hal	tickle/include/tickle/hal_generic.h	/^struct tt_hal {$/;"	s
+tt_hal	tickle/include/tickle/hal_linux.h	/^struct tt_hal {$/;"	s
+tt_hash_id	tickle/src/encoding.c	/^uint32_t tt_hash_id(const char* type, const char* name) {$/;"	f
+tt_is_native_endian	tickle/src/encoding.c	/^bool tt_is_native_endian(struct tt_Header* header) {$/;"	f
+tt_is_reverse_endian	tickle/src/encoding.c	/^bool tt_is_reverse_endian(struct tt_Header* header) {$/;"	f
+tt_log_debug	tickle/src/log.c	/^void tt_log_debug(const char* format, ...) {$/;"	f
+tt_log_error	tickle/src/log.c	/^void tt_log_error(const char* format, ...) {$/;"	f
+tt_log_info	tickle/src/log.c	/^void tt_log_info(const char* format, ...) {$/;"	f
+tt_log_init	tickle/src/log.c	/^void tt_log_init(tt_LogLevel level, FILE* output) {$/;"	f
+tt_log_internal	tickle/src/log.c	/^void tt_log_internal(tt_LogLevel level, const char* level_str, const char* format, va_list args) {$/;"	f
+tt_log_output	tickle/src/log.c	/^FILE* tt_log_output = NULL;$/;"	v
+tt_log_set_level	tickle/src/log.c	/^void tt_log_set_level(tt_LogLevel level) {$/;"	f
+tt_log_set_output	tickle/src/log.c	/^void tt_log_set_output(FILE* output) {$/;"	f
+tt_log_warning	tickle/src/log.c	/^void tt_log_warning(const char* format, ...) {$/;"	f
+tt_receive	tickle/src/hal_linux.c	/^int32_t tt_receive(struct tt_Node* node, void* buf, size_t len, uint32_t* ip, uint16_t* port) {$/;"	f
+tt_send	tickle/src/hal_linux.c	/^int32_t tt_send(struct tt_Node* node, const void* buf, size_t len) {$/;"	f
+tx_buffer	tickle/include/tickle/tickle.h	/^    uint8_t tx_buffer[tt_MAX_BUFFER_LENGTH * 2];$/;"	m	struct:tt_Node
+tx_size	tickle/include/tickle/tickle.h	/^    uint32_t tx_size;$/;"	m	struct:tt_Node
+tx_tail	tickle/include/tickle/tickle.h	/^    uint32_t tx_tail;$/;"	m	struct:tt_Node
+type	tickle/include/tickle/tickle.h	/^    uint8_t type;     \/\/ 0 for Node update, 2 for Data, 3 for AckNack$/;"	m	struct:tt_SubmessageHeader
+type_support	include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_message_type_support_t* type_support;$/;"	m	struct:rmw_tickle_publisher_t
+type_support	include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_message_type_support_t* type_support;$/;"	m	struct:rmw_tickle_subscriber_t
+type_support	include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_service_type_support_t* type_support;$/;"	m	struct:rmw_tickle_client_t
+type_support	include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_service_type_support_t* type_support;$/;"	m	struct:rmw_tickle_service_t
+type_support	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_message_type_support_t* type_support;$/;"	m	struct:rmw_tickle_publisher_t
+type_support	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_message_type_support_t* type_support;$/;"	m	struct:rmw_tickle_subscriber_t
+type_support	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_service_type_support_t* type_support;$/;"	m	struct:rmw_tickle_client_t
+type_support	tickle/rmw_tickle/include/rmw_tickle_c/rmw_tickle.h	/^    const rosidl_service_type_support_t* type_support;$/;"	m	struct:rmw_tickle_service_t
+uint64_data_callback	tickle/examples/uint64/subscriber.c	/^static void uint64_data_callback(struct tt_Subscriber* sub, uint64_t timestamp, uint16_t seq_no,$/;"	f	file:
+updates	tickle/include/tickle/tickle.h	/^    struct tt_UpdateHeader* updates[tt_MAX_ENDPOINT_COUNT];$/;"	m	struct:tt_Node	typeref:struct:tt_Node::tt_UpdateHeader
+version	tickle/include/tickle/tickle.h	/^    uint8_t version; \/\/ protocol version$/;"	m	struct:tt_Header
