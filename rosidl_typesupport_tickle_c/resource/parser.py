@@ -67,7 +67,7 @@ def get_field(typeInfo: rosdef.AbstractType, prefix: str = "") -> Field:
             raise TypeError(f"Handling array of string is not implemented yet")
         return nested_field
 
-def read_message(ros_message: rosdef.Message) -> Message:
+def parse_message(ros_message: rosdef.Message) -> Message:
     namedtype_prefix = "__".join(ros_message.structure.namespaced_type.namespaced_name()[0:2]) + "__"
     message = Message(fields=[])
     message.prefix = namedtype_prefix
@@ -77,9 +77,9 @@ def read_message(ros_message: rosdef.Message) -> Message:
         message.fields.append(field)
     return message
 
-def read_service(content: Content, ros_service: rosdef.Service) -> Content:
-    content.messages.append(read_message(ros_service.request_message))
-    content.messages.append(read_message(ros_service.response_message))
+def parse_service(content: Content, ros_service: rosdef.Service) -> Content:
+    content.messages.append(parse_message(ros_service.request_message))
+    content.messages.append(parse_message(ros_service.response_message))
     return content
 
 def parse_external_msg(pkg_path: Path, msg_path: Path, path: rosdef.Include) -> Optional[Content]:
@@ -115,10 +115,10 @@ def parse_msg(pkg_path: Path, msg_path: Path) -> Content:
     content = Content(name=msg_name, pkg_name=pkg_name, messages=[], include_paths=[], external_sources=set())
     if suffix == "msg":
         message = idl_file.content.get_elements_of_type(rosdef.Message)[0]
-        content.messages.append(read_message(message))
+        content.messages.append(parse_message(message))
     elif suffix == "srv":
         service = idl_file.content.get_elements_of_type(rosdef.Service)[0]
-        content = read_service(content, service)
+        content = parse_service(content, service)
     includes = idl_file.content.get_elements_of_type(rosdef.Include)
     for include in includes:
         external_source = Path(include.locator)

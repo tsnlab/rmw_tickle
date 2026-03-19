@@ -1,12 +1,13 @@
-@# Included from rosidl_typesupport_tickle_c/resource/idl__type_support_c.cpp.em
+@# Included from rosidl_typesupport_tickle_c/resource/idl__type_support_c.c.em
 @{
-from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+from rosidl_pycommon import convert_camel_case_to_lower_case_underscore
 from rosidl_generator_c import idl_structure_type_to_c_typename
 from rosidl_generator_type_description import GET_DESCRIPTION_FUNC
 from rosidl_generator_type_description import GET_HASH_FUNC
 from rosidl_generator_type_description import GET_SOURCES_FUNC
-from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractNestableType
+from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractSequence
 from rosidl_parser.definition import AbstractString
 from rosidl_parser.definition import BoundedString
@@ -22,6 +23,8 @@ from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import BoundedSequence
 from rosidl_parser.definition import UnboundedSequence
 from rosidl_parser.definition import NamespacedType
+from rosidl_parser.definition import NamedType
+from rosidl_parser.definition import Member
 
 include_parts = [package_name] + list(interface_path.parents[0].parts) + [
     'detail', convert_camel_case_to_lower_case_underscore(interface_path.stem)]
@@ -29,41 +32,24 @@ include_base = '/'.join(include_parts)
 
 header_files = [
     'stdint.h',
-    'stdio.h',
-    'string.h',
+    'stdbool.h',
     'rosidl_typesupport_tickle_c/identifier.h',
+    'rosidl_typesupport_tickle_c/message_type_support.h',
     package_name + '/msg/rosidl_typesupport_tickle_c__visibility_control.h',
     include_base + '__struct.h',
     include_base + '__functions.h',
 ]
 
-def get_suffix(typename):
-  if typename == 'boolean':
-    return 'bool'
-  elif typename == 'int8':
-    return 'int8_t'
-  elif typename in ('uint8', 'octet'):
-    return 'uint8_t'
-  elif typename == 'uint16':
-    return 'uint16_t'
-  elif typename == 'int16':
-    return 'int16_t'
-  elif typename == 'uint32':
-    return 'uint32_t'
-  elif typename == 'int32':
-    return 'int32_t'
-  elif typename == 'uint64':
-    return 'uint64_t'
-  elif typename == 'int64':
-    return 'int64_t'
-  else:
-    return typename
-
+unique_message_identifier = '__'.join(message.structure.namespaced_type.namespaced_name())
+message_name = message.structure.namespaced_type.name
+message_name_prefix = '__'.join([package_name] + list(interface_path.parents[0].parts))
+# tickle_type = tickle__ + unique_message_identifier
+tickle_type = unique_message_identifier
 }@
+
 @[for header_file in header_files]@
 @[    if header_file in include_directives]@
 // already included above
-// @
 @[    else]@
 @{include_directives.add(header_file)}@
 @[    end if]@
@@ -134,7 +120,6 @@ for member in message.structure.members:
 @[for header_file in sorted(includes.keys())]@
 @[    if header_file in include_directives]@
 // already included above
-// @
 @[    else]@
 @{include_directives.add(header_file)}@
 @[    end if]@
@@ -158,401 +143,249 @@ for member in message.structure.members:
 @[  if key[0] != package_name]@
 ROSIDL_TYPESUPPORT_TICKLE_C_IMPORT_@(package_name)
 @[  end if]@
-size_t get_serialized_size_@('__'.join(key))(
-  const void * untyped_ros_message,
-  size_t current_alignment);
-
-@[  if key[0] != package_name]@
-ROSIDL_TYPESUPPORT_TICKLE_C_IMPORT_@(package_name)
-@[  end if]@
-size_t max_serialized_size_@('__'.join(key))(
-  bool * full_bounded,
-  size_t current_alignment);
-
-@[  if key[0] != package_name]@
-ROSIDL_TYPESUPPORT_TICKLE_C_IMPORT_@(package_name)
-@[  end if]@
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(key)))();
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join(key)))();
 @[end for]@
 
 @# // Make callback functions specific to this message type.
 
-typedef @('__'.join(message.structure.namespaced_type.namespaced_name())) _@(message.structure.namespaced_type.name)__ros_msg_type;
+typedef @(unique_message_identifier) _@(message_name)_type;
 
-static bool _@(message.structure.namespaced_type.name)__cdr_serialize(
-  const void * untyped_ros_message,
-  ucdrBuffer * cdr)
-{
-  (void) untyped_ros_message;
-  (void) cdr;
+@[def get_type_size(member: Member)]@
+@{
+from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractString
+from rosidl_parser.definition import Array
+from rosidl_parser.definition import BasicType
+from rosidl_parser.definition import BoundedSequence
+from rosidl_parser.definition import BoundedString
+from rosidl_parser.definition import BoundedWString
+from rosidl_parser.definition import NamedType
+from rosidl_parser.definition import NamespacedType
+from rosidl_generator_c import BASIC_IDL_TYPES_TO_C
 
-  bool rv = false;
+class UnsupportedError(Exception):
+    pass
 
-  if (!untyped_ros_message) {
-    return false;
-  }
-
-  _@(message.structure.namespaced_type.name)__ros_msg_type * ros_message = (_@(message.structure.namespaced_type.name)__ros_msg_type *)(untyped_ros_message);
-  (void)ros_message;
-
-@[for member in message.structure.members]@
-  // Member: @(member.name)
-@[  if isinstance(member.type, AbstractNestedType)]@
-  {
-@[    if isinstance(member.type, Array)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t size = @(member.type.size);
-    rv = ucdr_serialize_array_@(get_suffix(member.type.value_type.typename))(cdr, ros_message->@(member.name), size);
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    const size_t array_size = sizeof(ros_message->@(member.name))/sizeof(ros_message->@(member.name)[0]);
-    for(size_t i = 0; i < array_size; i++){
-        rv = ((const message_type_support_callbacks_t *)(
-          ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-          )()->data))->cdr_serialize(&ros_message->@(member.name)[i], cdr);
-        if(rv == false){
-          break;
-        }
-    }
-@[      else]@
-    // Micro CDR only support arrays of basic and namespaced types.
-@[      end if]@
-@[    elif isinstance(member.type, AbstractSequence)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t size = ros_message->@(member.name).size;
-    rv = ucdr_serialize_sequence_@(get_suffix(member.type.value_type.typename))(cdr, ros_message->@(member.name).data, size);
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    const size_t size = ros_message->@(member.name).size;
-    rv = ucdr_serialize_uint32_t(cdr, size);
-
-    if(rv == true){
-      for(size_t i = 0; i < size; i++){
-        rv = ((const message_type_support_callbacks_t *)(
-          ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-          )()->data))->cdr_serialize(&ros_message->@(member.name).data[i], cdr);
-        if(rv == false){
-          break;
-        }
-      }
-    }
-@[      elif isinstance(member.type.value_type, AbstractString)]@
-    const size_t size = ros_message->@(member.name).size;
-    rv = ucdr_serialize_uint32_t(cdr, size);
-    for (size_t i = 0; rv && i < size; ++i) {
-      uint32_t string_len = (ros_message->@(member.name).data[i].data == NULL) ? 0 : (uint32_t)strlen(ros_message->@(member.name).data[i].data) + 1;
-      ros_message->@(member.name).data[i].size = (ros_message->@(member.name).data[i].data == NULL) ? 0 : string_len - 1;
-      rv = ucdr_serialize_sequence_char(cdr, ros_message->@(member.name).data[i].data, string_len);
-    }
-@[      end if]@
+type_ = member.type
+size = 0
+string_type = 0
+named_type = 0
+if isinstance(type_, AbstractNestedType):
+    if isinstance(type_, Array):
+        size = type_.size
+    elif isinstance(type_, BoundedSequence):
+        size = type_.maximum_size
+    else:
+        raise UnsupportedError(f"{type(type_)} not supported")
+    type_ = type_.value_type
+    if isinstance(type_, AbstractString):
+        raise UnsupportedError(f"{type(type_)} not supported")
+if isinstance(type_, AbstractString):
+    if isinstance(type_, BoundedString):
+        string_type = 1
+    elif isinstance(type_, BoundedWString):
+        string_type = 2
+    else:
+        raise UnsupportedError(f"{type(type_)} not supported")
+    size = type_.maximum_size
+elif isinstance(type_, NamedType):
+    named_type = 1
+elif isinstance(type_, NamespacedType):
+    named_type = 2
+elif isinstance(type_, BasicType):
+    pass
+else:
+    raise UnsupportedError(f"{type(type_)} not supported")
+}@
+@[    if size > 0]@
+@(f"{size} * ")@
 @[    end if]@
-  }
-@[  elif isinstance(member.type, BasicType)]@
-@[    if get_suffix(member.type.typename) == "bool"]@
-  rv = ucdr_serialize_@(get_suffix(member.type.typename))(cdr, (ros_message->@(member.name)) ? 0x01 : 0x00);
+@[    if named_type == 1]@
+@(message_name_prefix)@(type_.name)_callbacks.data_encode_size((struct tt_Data*)&data->@(member.name))@
+@[    elif named_type == 2]@
+@(type_.namespaced_name())_callbacks.data_encode_size((struct tt_Data*)&data->@(member.name))@
+@[    elif string_type == 1]@
+sizeof(char)@
+@[    elif string_type == 2]@
+sizeof(uint16_t)@
 @[    else]@
-  rv = ucdr_serialize_@(get_suffix(member.type.typename))(cdr, ros_message->@(member.name));
+sizeof(@(BASIC_IDL_TYPES_TO_C[type_.typename]))@
 @[    end if]@
-@[  elif isinstance(member.type, AbstractString)]@
- {
-    uint32_t string_len = (ros_message->@(member.name).data == NULL) ? 0 : (uint32_t)strlen(ros_message->@(member.name).data) + 1;
-    ros_message->@(member.name).size = (ros_message->@(member.name).data == NULL) ? 0 : string_len - 1 ;
-    rv = ucdr_serialize_sequence_char(cdr, ros_message->@(member.name).data, string_len);
-  }
-@[  elif isinstance(member.type, AbstractWString)]@
-  // Micro CDR does not support WString type.
-@[  elif isinstance(member.type, NamespacedType)]@
-  rv = ((const message_type_support_callbacks_t *)(
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.namespaced_name()))
-      )()->data))->cdr_serialize(&ros_message->@(member.name), cdr);
-@[  else]@
-  // Micro CDR does not support this type.
-@[  end if]@
-@[end for]@
+@[end def]@
 
-  return rv;
+@[def generate_encoder_impl(encode_or_decode: str, member: Member)]@
+@{  
+from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractNestableType
+from rosidl_parser.definition import AbstractString
+from rosidl_parser.definition import Array
+from rosidl_parser.definition import BoundedSequence
+from rosidl_parser.definition import BoundedString
+from rosidl_parser.definition import BoundedWString
+from rosidl_parser.definition import NamedType
+from rosidl_parser.definition import NamespacedType
+
+class UnsupportedError(Exception):
+    pass
+
+size = 0
+type_ = member.type
+if isinstance(type_, AbstractNestedType):
+    if isinstance(type_, Array):
+        size = type_.size
+    elif isinstance(type_, BoundedSequence):
+        size = type_.maximum_size
+    else:
+        raise UnsupportedError(f"{type(type_)} not supported")
+    type_ = type_.value_type
+    if isinstance(type_, AbstractString):
+        raise UnsupportedError(f"{type(type_)} not supported")
+elif isinstance(type_, AbstractNestableType):
+    pass
+else:
+    raise UnsupportedError(f"{type(type_)} not supported")
+}@
+@[if isinstance(type_, NamedType) or isinstance(type_, NamespacedType)]@
+@[    if isinstance(type_, NamedType)]@
+@{        type_name = message_name_prefix + type_.name}@
+@[    else]@
+@{        type_name = '__'.join(type_.namespaced_name())}@
+@[    end if]@
+@[    if size > 0]@
+    size = @(type_name)_callbacks.data_encode_size((struct tt_Data*)&data->@(member.name)[0]);
+    for (int32_t i = 0; i < @(size); ++i) {
+        ret = @(type_name)_callbacks.data_@(encode_or_decode)((struct tt_Data*)&data->@(member.name)[i], payload, size@(encode_or_decode == "encode" ? "" ! ", is_native_endian" ));
+        @(encode_or_decode)d += ret;
+        payload += ret;
+    }
+@[    else]@
+    size = @(type_name)_callbacks.data_encode_size((struct tt_Data*)&data->@(member.name));
+    ret = @(type_name)_callbacks.data_@(encode_or_decode)((struct tt_Data*)&data->@(member.name), payload, size@(encode_or_decode == "encode" ? "" ! ", is_native_endian" ));
+    @(encode_or_decode)d += ret;
+    payload += ret;
+@[    end if]@
+@[else]@
+@[    if encode_or_decode == "encode"]@
+    _tt_memcpy(payload, &data->@(member.name), size);
+@[    else]@
+    _tt_memcpy(&data->@(member.name), payload, size);
+@[    end if]@
+    @(encode_or_decode)d += size;
+    payload += size;
+@[end if]@
+@[end def]@
+
+@#[def generate_encoder(member: Member)]@
+@#(generate_encoder_impl("encode", member))
+@#[end def]@
+
+@#[def generate_decoder(member: Member)]@
+@#(generate_encoder_impl("decode", member))
+@#[end def]@
+
+
+
+int32_t encode_size_@(unique_message_identifier)(
+    @(tickle_type)* data)
+{
+    return@
+@[for member in message.structure.members]@
+@[    if member == message.structure.members[0]]@
+@(' ')@
+@[    else]@
+@('           ')
+@[    end if]@
+@get_type_size(member)@(member == message.structure.members[-1] ? ';' ! ' +')
+@[end for]@
 }
 
-static bool _@(message.structure.namespaced_type.name)__cdr_deserialize(
-  ucdrBuffer * cdr,
-  void * untyped_ros_message)
+int32_t encode_@(unique_message_identifier)(
+    @(tickle_type)* data,
+    uint8_t* payload,
+    const int32_t len)
 {
-  (void) cdr;
+    int32_t encoded = 0;
+    int32_t ret;
+    int32_t size;
 
-  bool rv = false;
-
-  if (!untyped_ros_message) {
-    return false;
-  }
-  _@(message.structure.namespaced_type.name)__ros_msg_type * ros_message = (_@(message.structure.namespaced_type.name)__ros_msg_type *)(untyped_ros_message);
-  (void)ros_message;
+    if (_@(message_name)__encode_size(data) > len) {
+        return -1;
+    }
 
 @[for member in message.structure.members]@
-  // Field name: @(member.name)
-@[  if isinstance(member.type, AbstractNestedType)]@
-  {
-@[    if isinstance(member.type, Array)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t size = @(member.type.size);
-    rv = ucdr_deserialize_array_@(get_suffix(member.type.value_type.typename))(cdr, ros_message->@(member.name), size);
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    const size_t array_size = sizeof(ros_message->@(member.name))/sizeof(ros_message->@(member.name)[0]);
-    for(size_t i = 0; i < array_size; i++){
-      rv = ((const message_type_support_callbacks_t *)(
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-        )()->data))->cdr_deserialize(cdr, &ros_message->@(member.name)[i]);
-      if(rv == false){
-        break;
-      }
-    }
-@[      else]@
-    // Micro CDR only support arrays of basic and namespaced types.
-@[      end if]@
-@[    elif isinstance(member.type, AbstractSequence)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    uint32_t size;
-    const size_t capacity = ros_message->@(member.name).capacity;
-    rv = ucdr_deserialize_sequence_@(get_suffix(member.type.value_type.typename))(cdr, ros_message->@(member.name).data, capacity, &size);
-    if (rv) {
-      ros_message->@(member.name).size = size;
-    } else if(size > capacity){
-      cdr->error = false;
-      cdr->last_data_size = 1;
-      ros_message->@(member.name).size = 0;
-      ucdr_align_to(cdr, sizeof(@(get_suffix(member.type.value_type.typename))));
-      ucdr_advance_buffer(cdr, size * sizeof(@(get_suffix(member.type.value_type.typename))));
-    }
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    uint32_t size;
-    rv = ucdr_deserialize_uint32_t(cdr, &size);
-
-    if(size > ros_message->@(member.name).capacity){
-      return 0;
-    }
-
-    ros_message->@(member.name).size = size;
-    for(size_t i = 0; i < size; i++){
-      rv = ((const message_type_support_callbacks_t *)(
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-        )()->data))->cdr_deserialize(cdr, &ros_message->@(member.name).data[i]);
-      if(rv == false){
-        break;
-      }
-    }
-@[      elif isinstance(member.type.value_type, AbstractString)]@
-    uint32_t size;
-    rv = ucdr_deserialize_uint32_t(cdr, &size);
-
-    if(size > ros_message->@(member.name).capacity){
-      return 0;
-    }
-    ros_message->@(member.name).size = size;
-
-    for (size_t i = 0; rv && i < size; i++) {
-      size_t capacity = ros_message->@(member.name).data[i].capacity;
-      uint32_t string_size;
-      char * data = ros_message->@(member.name).data[i].data;
-      rv = ucdr_deserialize_sequence_char(cdr, data, capacity, &string_size);
-      if (rv) {
-        ros_message->@(member.name).data[i].size = (string_size == 0) ? 0 : string_size - 1;
-      } else if(string_size > capacity){
-        cdr->error = false;
-        cdr->last_data_size = 1;
-        ros_message->@(member.name).data[i].size = 0;
-        ucdr_align_to(cdr, sizeof(char));
-        ucdr_advance_buffer(cdr, string_size);
-      }
-    }
-@[      end if]@
-@[    end if]@
-  }
-@[  elif isinstance(member.type, BasicType)]@
-  rv = ucdr_deserialize_@(get_suffix(member.type.typename))(cdr, &ros_message->@(member.name));
-@[  elif isinstance(member.type, AbstractString)]@
-  {
-    size_t capacity = ros_message->@(member.name).capacity;
-    uint32_t string_size;
-    rv = ucdr_deserialize_sequence_char(cdr, ros_message->@(member.name).data, capacity, &string_size);
-    if (rv) {
-      ros_message->@(member.name).size = (string_size == 0) ? 0 : string_size - 1;
-    } else if(string_size > capacity){
-      cdr->error = false;
-      cdr->last_data_size = 1;
-      ros_message->@(member.name).size = 0;
-      ucdr_align_to(cdr, sizeof(char));
-      ucdr_advance_buffer(cdr, string_size);
-    }
-  }
-@[  elif isinstance(member.type, AbstractWString)]@
-  // Micro CDR does not support WString type.
-@[  elif isinstance(member.type, NamespacedType)]@
-  rv = ((const message_type_support_callbacks_t *)(
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.namespaced_name()))
-      )()->data))->cdr_deserialize(cdr, &ros_message->@(member.name));
-@[  else]@
-  // Micro CDR does not support this type.
-@[  end if]@
+@# *(@(member.type)*)payload = data->@(member.name);
+@[if not (isinstance(type_, NamedType) or isinstance(type_, NamespacedType))]@
+    size = @(get_type_size(member));
+@[end if]@
+@(generate_encoder_impl("encode", member))
 @[end for]@
-  return rv;
+    return encoded;
 }
 
-ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-size_t get_serialized_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  const void * untyped_ros_message,
-  size_t current_alignment)
+int32_t decode_@(unique_message_identifier)(
+    @(tickle_type)* data,
+    uint8_t* payload,
+    const int32_t len,
+    bool is_native_endian)
 {
-  if (!untyped_ros_message) {
+    int32_t decoded = 0;
+    int32_t ret;
+    int32_t size;
+
+    if (_@(message_name)__encode_size(data) > len) {
+        return -1;
+    }
+
+@[for member in message.structure.members]@
+@[if not (isinstance(type_, NamedType) or isinstance(type_, NamespacedType))]@
+    size = @(get_type_size(member));
+@[end if]@
+@(generate_encoder_impl("decode", member))
+@[end for]@
+    return decoded;
+}
+
+void free_@(unique_message_identifier)(
+    @(tickle_type)* data)
+{
+    (void)data;
+}
+
+int32_t convert_to_tickle_from_@(unique_message_identifier)(
+    @(tickle_type)* to,
+    void* from)
+{
     return 0;
-  }
-
-  const _@(message.structure.namespaced_type.name)__ros_msg_type * ros_message = (const _@(message.structure.namespaced_type.name)__ros_msg_type *)(untyped_ros_message);
-  (void)ros_message;
-
-  const size_t initial_alignment = current_alignment;
-
-@[for member in message.structure.members]@
-  // Member: @(member.name)
-@[  if isinstance(member.type, AbstractNestedType)]@
-  {
-@[    if isinstance(member.type, Array)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t array_size = @(member.type.size);
-    const size_t item_size = sizeof(ros_message->@(member.name)[0]);
-    current_alignment += ucdr_alignment(current_alignment, item_size) + (array_size * item_size);
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    const size_t array_size = sizeof(ros_message->@(member.name))/sizeof(ros_message->@(member.name)[0]);
-    for(size_t i = 0; i < array_size; i++){
-      size_t element_size = ((const message_type_support_callbacks_t *)(
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-        )()->data))->get_serialized_size_with_initial_alignment(&ros_message->@(member.name)[i], current_alignment);
-      current_alignment += element_size;
-    }
-@[      end if]@
-@[    elif isinstance(member.type, AbstractSequence)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    size_t sequence_size = ros_message->@(member.name).size;
-    current_alignment += ucdr_alignment(current_alignment, TICKLE_PADDING) + TICKLE_PADDING;
-
-    if (0 < sequence_size) {
-      size_t item_size = sizeof(ros_message->@(member.name).data[0]);
-      current_alignment += ucdr_alignment(current_alignment, item_size) + (sequence_size * item_size);
-    }
-@[      elif isinstance(member.type.value_type, NamespacedType)]@
-    const size_t sequence_size = ros_message->@(member.name).size;
-
-    current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING) + MICROXRCEDDS_PADDING;
-
-    for(size_t i = 0; i < sequence_size; i++){
-      size_t element_size = ((const message_type_support_callbacks_t *)(
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join(member.type.value_type.namespaced_name()))
-        )()->data))->get_serialized_size_with_initial_alignment(&ros_message->@(member.name).data[i], current_alignment);
-      uint8_t alignment_size = (element_size < MICROXRCEDDS_PADDING) ? element_size : MICROXRCEDDS_PADDING;
-      current_alignment += ucdr_alignment(current_alignment, alignment_size) + element_size;
-    }
-@[      elif isinstance(member.type.value_type, AbstractString)]@
-    const size_t sequence_size = ros_message->@(member.name).size;
-    current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING) + MICROXRCEDDS_PADDING;
-
-    for(size_t i = 0; i < sequence_size; i++){
-      current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING) + MICROXRCEDDS_PADDING;
-      current_alignment += ros_message->@(member.name).data[i].size + 1;
-    }
-@[      end if]@
-@[    end if]@
-  }
-@[  elif isinstance(member.type, BasicType)]@
-  {
-    const size_t item_size = sizeof(ros_message->@(member.name));
-    current_alignment += ucdr_alignment(current_alignment, item_size) + item_size;
-  }
-@[  elif isinstance(member.type, AbstractString)]@
-  current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING) + MICROXRCEDDS_PADDING;
-  current_alignment += ros_message->@(member.name).size + 1;
-@[  elif isinstance(member.type, NamespacedType)]@
-  current_alignment +=
-    get_serialized_size_@('__'.join(member.type.namespaced_name()))(&ros_message->@(member.name), current_alignment);
-@[  end if]@
-@[end for]@
-
-  return current_alignment - initial_alignment;
 }
 
-static uint32_t _@(message.structure.namespaced_type.name)__get_serialized_size(const void * untyped_ros_message)
+int32_t convert_from_tickle_to_@(unique_message_identifier)(
+    void* to,
+    @(tickle_type)* from)
 {
-  return (uint32_t)(
-    get_serialized_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-      untyped_ros_message, 0));
+    return 0;
 }
 
-ROSIDL_TYPESUPPORT_MICROXRCEDDS_C_PUBLIC_@(package_name)
-size_t max_serialized_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  bool * full_bounded,
-  size_t current_alignment)
-{
-  (void) current_alignment;
-  *full_bounded = true;
 
-  const size_t initial_alignment = current_alignment;
 
-@[for member in message.structure.members]@
-  // Member: @(member.name)
-@[  if isinstance(member.type, AbstractNestedType)]@
-  {
-@[    if isinstance(member.type, Array)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t array_size = @(member.type.size);
-    current_alignment += ucdr_alignment(current_alignment, sizeof(@(get_suffix(member.type.value_type.typename)))) + (array_size * sizeof(@(get_suffix(member.type.value_type.typename))));
-@[      else]@
-    *full_bounded = false;
-@[      end if]@
-@[    elif isinstance(member.type, BoundedSequence)]@
-@[      if isinstance(member.type.value_type, BasicType)]@
-    const size_t max_sequence_size = @(member.type.maximum_size);
-    current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING) + MICROXRCEDDS_PADDING;
-    current_alignment += ucdr_alignment(current_alignment, sizeof(@(get_suffix(member.type.value_type.typename)))) + (max_sequence_size * sizeof(@(get_suffix(member.type.value_type.typename))));
-@[      else]@
-    *full_bounded = false;
-@[      end if]@
-@[    elif isinstance(member.type, UnboundedSequence)]@
-    *full_bounded = false;
-@[    end if]@
-  }
-@[  elif isinstance(member.type, BasicType)]@
-  current_alignment += ucdr_alignment(current_alignment, sizeof(@(get_suffix(member.type.typename)))) + sizeof(@(get_suffix(member.type.typename)));
-@[  elif isinstance(member.type, BoundedString)]@
-  current_alignment += ucdr_alignment(current_alignment, MICROXRCEDDS_PADDING);
-  current_alignment += @(member.type.maximum_size) + 1;
-@[  elif isinstance(member.type, NamespacedType)]@
-  current_alignment +=
-    max_serialized_size_@('__'.join(member.type.namespaced_name()))(full_bounded, current_alignment);
-@[  else]@
-  *full_bounded = false;
-@[  end if]@
-@[end for]@
 
-  return current_alignment - initial_alignment;
-}
-
-static size_t _@(message.structure.namespaced_type.name)__max_serialized_size()
-{
-  bool full_bounded;
-  return max_serialized_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(&full_bounded, 0);
-}
-@
 @# // Collect the callback functions and provide a function to get the type support struct.
 
-static message_type_support_callbacks_t __callbacks_@(message.structure.namespaced_type.name) = {
-  "@('::'.join([package_name] + list(interface_path.parents[0].parts)))",
-  "@(message.structure.namespaced_type.name)",
-  _@(message.structure.namespaced_type.name)__encode,
-  _@(message.structure.namespaced_type.name)__decode,
-  _@(message.structure.namespaced_type.name)__encode_size,
-  get_serialized_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name])),
-  _@(message.structure.namespaced_type.name)__max_serialized_size
+message_type_support_callbacks_t @(unique_message_identifier)_callbacks = {
+  "@(message_name_prefix)",
+  "@(message_name)",
+  sizeof(struct @(tickle_type)),
+  encode_size_@(unique_message_identifier),
+  encode_@(unique_message_identifier),
+  decode_@(unique_message_identifier),
+  free_@(unique_message_identifier),
+  convert_to_tickle_from_@(unique_message_identifier),
+  convert_from_tickle_to_@(unique_message_identifier),
 };
 
-static rosidl_message_type_support_t _@(message.structure.namespaced_type.name)__type_support = {
-  ROSIDL_TYPESUPPORT_MICROXRCEDDS_C__IDENTIFIER_VALUE,
-  &__callbacks_@(message.structure.namespaced_type.name),
+static rosidl_message_type_support_t _@(message_name)__type_support = {
+  ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER,
+  &@(unique_message_identifier)_callbacks,
   get_message_typesupport_handle_function,
 
   &@(idl_structure_type_to_c_typename(message.structure.namespaced_type))__@(GET_HASH_FUNC),
@@ -561,8 +394,8 @@ static rosidl_message_type_support_t _@(message.structure.namespaced_type.name)_
 };
 
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name])))() {
-  return &_@(message.structure.namespaced_type.name)__type_support;
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name])))() {
+  return &_@(message_name)__type_support;
 }
 
 #if defined(__cplusplus)

@@ -22,7 +22,7 @@ extern "C"
 #endif
 
 const char *
-  rosidl_typesupport_tickle_c__identifier = "rosidl_typesupport_tickle_c";
+  rosidl_typesupport_tickle_c__identifier = ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER;
 
 #ifdef __cplusplus
 }

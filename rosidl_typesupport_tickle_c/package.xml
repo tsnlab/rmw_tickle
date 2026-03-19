@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rosidl_typesupport_tickle</name>
+  <name>rosidl_typesupport_tickle_c</name>
   <version>0.0.1</version>
   <description>Generate the C interfaces for TickLE</description>
   <maintainer email="harim@tsnlab.com">Harim Seong</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
   <depend>rmw</depend>
-  <depend>rosidl_typesupport_tickle_c</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

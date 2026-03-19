@@ -5,6 +5,7 @@ header_files = [
     'stdint.h',
     'rosidl_runtime_c/message_type_support_struct.h',
     'rosidl_typesupport_interface/macros.h',
+    'rosidl_typesupport_tickle_c/message_type_support.h',
     package_name + '/msg/rosidl_typesupport_tickle_c__visibility_control.h',
 ]
 }@
@@ -22,31 +23,17 @@ header_files = [
 @[    end if]@
 @[end for]@
 
+@{
+unique_message_identifier = '__'.join(message.structure.namespaced_type.namespaced_name())
+}@
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-int32_t encode_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  @('__'.join(message.structure.namespaced_type.namespaced_name()))* data,
-  uint8_t* payload,
-  const int32_t len);
-
-ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-int32_t decode_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  @('__'.join(message.structure.namespaced_type.namespaced_name()))* data,
-  uint8_t* payload,
-  const int32_t len
-  bool is_native_endian);
-
-ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-int32_t encode_size_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  @('__'.join(message.structure.namespaced_type.namespaced_name()))* data);
-
-ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-void free_@('__'.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name]))(
-  @('__'.join(message.structure.namespaced_type.namespaced_name()))* data);
+extern message_type_support_callbacks_t @(unique_message_identifier)_callbacks;
 
 ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
 const rosidl_message_type_support_t*

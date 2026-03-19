@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(rosidl_typesupport_tickle LANGUAGES C)
+project(rosidl_typesupport_tickle_c LANGUAGES C)
 
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -9,8 +9,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-# find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_ros_core REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
 # Provides definitions, initialization and finalization functions, and macros for getting and working with rosidl typesupport types in C.
@@ -55,8 +54,8 @@ ament_package(
 )
 
 install(
-  PROGRAMS bin/rosidl_typesupport_fastrtps_c
-  DESTINATION lib/rosidl_typesupport_fastrtps_c
+  PROGRAMS bin/rosidl_typesupport_tickle_c
+  DESTINATION lib/rosidl_typesupport_tickle_c
 )
 
 install(
