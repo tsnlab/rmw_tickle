@@ -24,8 +24,8 @@ extern "C"
 
 #define ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER "rosidl_typesupport_tickle_c"
 
-ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC
-extern const char * rosidl_typesupport_tickle_c__identifier;
+extern ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC
+const char * rosidl_typesupport_tickle_c__identifier;
 
 #ifdef __cplusplus
 }

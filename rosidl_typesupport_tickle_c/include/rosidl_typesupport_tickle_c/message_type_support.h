@@ -34,6 +34,9 @@ typedef struct message_type_support_callbacks_t
   // deserialize
   int32_t (*data_decode)(void* data, uint8_t* payload, const int32_t len, bool is_native_endian);
 
+  // allocate if necessary
+  int32_t (*data_alloc)(void);
+
   // deallocate if any
   void (*data_free)(void* data);
 

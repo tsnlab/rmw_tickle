@@ -33,7 +33,7 @@ extern "C"
 #endif
 
 ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
-extern message_type_support_callbacks_t @(unique_message_identifier)_callbacks;
+extern message_type_support_callbacks_t @(unique_message_identifier)__callbacks;
 
 ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
 const rosidl_message_type_support_t*

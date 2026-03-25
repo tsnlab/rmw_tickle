@@ -1,4 +1,4 @@
-@# Included from rosidl_typesupport_microxrcedds_c/resource/idl__type_support_c.c.em
+@# Included from rosidl_typesupport_tickle_c/resource/idl__type_support_c.c.em
 @{
 from rosidl_generator_c import idl_structure_type_to_c_typename
 from rosidl_generator_type_description import GET_DESCRIPTION_FUNC
@@ -43,9 +43,9 @@ include_base = '/'.join(include_parts)
 
 header_files = [
     # Provides the definition of the service_type_support_callbacks_t struct.
-    'rosidl_typesupport_microxrcedds_c/service_type_support.h',
-    'rosidl_typesupport_microxrcedds_c/identifier.h',
-    package_name + '/msg/rosidl_typesupport_microxrcedds_c__visibility_control.h',
+    'rosidl_typesupport_tickle_c/service_type_support.h',
+    'rosidl_typesupport_tickle_c/identifier.h',
+    package_name + '/msg/rosidl_typesupport_tickle_c__visibility_control.h',
     include_base + '.h',
 ]
 }@
@@ -64,15 +64,15 @@ extern "C"
 {
 #endif
 
-static service_type_support_callbacks_t @(service.namespaced_type.name)__callbacks = {
-  "@('::'.join([package_name] + list(interface_path.parents[0].parts)))",
+service_type_support_callbacks_t @(service.namespaced_type.name)__callbacks = {
+  "@('__'.join([package_name] + list(interface_path.parents[0].parts)))",
   "@(service.namespaced_type.name)",
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name]))_Request),
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name]))_Response),
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name]))_Request),
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name]))_Response),
 };
 
 static rosidl_service_type_support_t @(service.namespaced_type.name)__handle = {
-  ROSIDL_TYPESUPPORT_MICROXRCEDDS_C__IDENTIFIER_VALUE,
+  ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER,
   &@(service.namespaced_type.name)__callbacks,
   get_service_typesupport_handle_function,
 
@@ -95,7 +95,7 @@ static rosidl_service_type_support_t @(service.namespaced_type.name)__handle = {
 };
 
 const rosidl_service_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_microxrcedds_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name])))() {
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [service.namespaced_type.name])))() {
   return &@(service.namespaced_type.name)__handle;
 }
 

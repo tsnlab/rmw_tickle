@@ -11,14 +11,18 @@ endif()
 # find dependencies
 find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_python REQUIRED)
+find_package(rmw REQUIRED)
 
 # Provides definitions, initialization and finalization functions, and macros for getting and working with rosidl typesupport types in C.
 find_package(rosidl_runtime_c REQUIRED)
 
 ament_export_dependencies(
   rmw
+  rosidl_cmake
   rosidl_runtime_c
+  rosidl_typesupport_interface
 )
+
 
 ament_python_install_package(${PROJECT_NAME})
 
@@ -32,10 +36,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
+  rmw::rmw
   rosidl_runtime_c::rosidl_runtime_c
 )
 
+ament_export_include_directories(include/${PROJECT_NAME})
+ament_export_libraries(${PROJECT_NAME})
 ament_export_targets(${PROJECT_NAME})
+ament_index_register_resource("rosidl_typesupport_c")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

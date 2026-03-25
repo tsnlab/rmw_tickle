@@ -14,8 +14,6 @@
 
 #include <rosidl_typesupport_tickle_c/identifier.h>
 
-#include <rosidl_typesupport_tickle_c/visibility_control.h>
-
 #ifdef __cplusplus
 extern "C"
 {
