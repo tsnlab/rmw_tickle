@@ -22,10 +22,11 @@
 #include <rmw/error_handling.h>
 #include <rmw/rmw.h>
 #include <rosidl_runtime_c/message_type_support_struct.h>
+#include <rosidl_typesupport_tickle_c/message_type_support.h>
+#include <rosidl_typesupport_tickle_c/identifier.h>
+#include <tickle/tickle.h>
 
 #include "rmw_tickle_c/rmw_tickle.h"
-
-// #include "__TEMP__messages.h"
 
 rmw_ret_t rmw_init_publisher_allocation(const rosidl_message_type_support_t* type_support,
                                         const rosidl_runtime_c__Sequence__bound* message_bounds,
@@ -43,15 +44,6 @@ rmw_ret_t rmw_fini_publisher_allocation(rmw_publisher_allocation_t* allocation) 
     return RMW_RET_UNSUPPORTED;
 }
 
-/**
- * Validate arguments, QoS, 
- * @param  node
- * @param  type_support
- * @param  topic_name
- * @param  qos_policies
- * @param  publisher_options
- * @return 
- */
 rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_message_type_support_t* type_support,
                                       const char* topic_name, const rmw_qos_profile_t* qos_policies,
                                       const rmw_publisher_options_t* publisher_options) {
@@ -63,6 +55,14 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
 
     if (strcmp(node->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
+        return NULL;
+    }
+
+    // Get type support handler from type support library
+    const rosidl_message_type_support_t* type_support_handle = get_message_typesupport_handle(
+        type_support, ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER); 
+    if (type_support_handle == NULL) {
+        RMW_SET_ERROR_MSG_WITH_FORMAT_STRING("Failed to get type support handler for topic \"%s\"", topic_name);
         return NULL;
     }
 
@@ -89,7 +89,7 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
 
     // Store node and type support references
     tickle_publisher->node = (rmw_tickle_node_t*)node->data;
-    tickle_publisher->type_support = type_support;
+    tickle_publisher->type_support = type_support_handle;
 
     // Initialize TickLE publisher
     // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
@@ -100,25 +100,21 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
         return NULL;
     }
 
-    // Initialize topic with basic information
+    // Initialize topic with basic information and type support callbacks
+    const message_type_support_callbacks_t* type_support_callbacks = type_support_handle->data;
+    topic->data_size = type_support_callbacks->data_size;
+    topic->data_encode_size = (tt_DATA_ENCODE_SIZE)type_support_callbacks->data_encode_size;
+    topic->data_encode = (tt_DATA_ENCODE)type_support_callbacks->data_encode;
+    topic->data_decode = (tt_DATA_DECODE)type_support_callbacks->data_decode;
+//  topic->data_alloc = type_support_callbacks->alloc;
+    topic->data_free = (tt_DATA_FREE)type_support_callbacks->data_free;
+
     topic->name = rcutils_strdup(topic_name, tickle_node->allocator);
     topic->history_depth = 10; // Default QoS
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
 
-    // if ((strcmp(topic_name, "/microROS/ping") == 0) || (strcmp(topic_name, "/microROS/pong") == 0)) {
-    //     topic->data_size = sizeof(struct HeaderData);
-    //     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)HeaderData_encode_size;
-    //     topic->data_encode = (tt_DATA_ENCODE)HeaderData_encode;
-    //     topic->data_decode = (tt_DATA_DECODE)HeaderData_decode;
-    //     topic->data_free = (tt_DATA_FREE)HeaderData_free;
-    // } else if (strcmp(topic_name, "/chatter") == 0) {
-    //     topic->data_size = sizeof(struct StringData);
-    //     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)StringData_encode_size;
-    //     topic->data_encode = (tt_DATA_ENCODE)StringData_encode;
-    //     topic->data_decode = (tt_DATA_DECODE)StringData_decode;
-    //     topic->data_free = (tt_DATA_FREE)StringData_free;
-    // }
+    RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, topic_name);
 
     int32_t result = tt_Node_create_publisher(&tickle_publisher->node->tickle_node, &tickle_publisher->tickle_publisher,
                                               topic, topic_name);
@@ -188,33 +184,35 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
         return RMW_RET_ERROR;
     }
 
-    if ((strcmp(tickle_publisher->tickle_publisher.topic->name, "/parameter_events") == 0) ||
-        (strcmp(tickle_publisher->tickle_publisher.topic->name, "/rosout") == 0)) {
-        // TODO: Any kind of message should be published
-        return RMW_RET_OK;
-    }
+    const message_type_support_callbacks_t* type_support_callbacks = tickle_publisher->type_support->data;
 
     // Create a data structure for TickLE
-    // In a real implementation, this would serialize the ROS message
-    struct tt_Data* data = malloc(sizeof(struct tt_Data));
-    if (data == NULL) {
+    /*
+    // NOTE: currently using malloc instead of RMW allocator 
+    tickle_data = type_support_callbacks->data_alloc();
+    if (tickle_data == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE data");
         return RMW_RET_ERROR;
     }
+    type_support_callbacks->convert_data_to_tickle(tickle_data, ros_message);
+    int32_t result = tt_Publisher_publish(&tickle_publisher->tickle_publisher, tickle_data);
+    // Note: We don't free data here since it's pointing to the tickle_data
+    */
 
-    // For now, we'll store a pointer to the ROS message in the data structure
-    // In a complete implementation, we would serialize the ros_message here
-    // This is a simplified approach - in reality, we would need proper serialization
-    data = (struct tt_Data*)ros_message; // Cast for now - this is not ideal but works for testing
+    // Publish data through TickLE.
+    // 
+    char  temp_str[128] = {0, };
 
-    int32_t result = tt_Publisher_publish(&tickle_publisher->tickle_publisher, data);
-
-    // Note: We don't free data here since it's pointing to the ros_message
+    memcpy(temp_str, ros_message, 127);
+    RCUTILS_LOG_INFO("ros_message=%s", temp_str);
+    int32_t result = tt_Publisher_publish(&tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);
 
     if (result != 0) {
         RMW_SET_ERROR_MSG("Failed to publish message via TickLE");
         return RMW_RET_ERROR;
     }
+
+    tt_Node_flush(&tickle_publisher->node->tickle_node);
 
     RCUTILS_LOG_DEBUG("Successfully published message via TickLE");
     return RMW_RET_OK;

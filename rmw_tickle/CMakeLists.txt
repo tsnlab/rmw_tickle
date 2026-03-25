@@ -73,6 +73,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Link with pthread and tickle library
 target_link_libraries(${PROJECT_NAME}
   pthread
+  rosidl_typesupport_tickle_c::rosidl_typesupport_tickle_c
   # $ENV{TICKLE_PATH}/libtickle.a
 )
 
@@ -87,7 +88,7 @@ ament_export_dependencies(
 configure_rmw_library($${PROJECT_NAME})
 
 # RMW CMake function that receives "<language>:<typesupport1>[:<typesupport2>]"
-register_rmw_implementation("c:rosidl_typesupport_tickle")
+register_rmw_implementation("c:rosidl_typesupport_c:rosidl_typesupport_tickle_c")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
