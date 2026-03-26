@@ -53,6 +53,7 @@ class UnsupportedError(Exception):
 def get_type_size(member: Member) -> str:
     from rosidl_parser.definition import AbstractNestedType
     from rosidl_parser.definition import AbstractString
+    from rosidl_parser.definition import AbstractGenericString
     from rosidl_parser.definition import AbstractWString
     from rosidl_parser.definition import Array
     from rosidl_parser.definition import BasicType
@@ -67,38 +68,46 @@ def get_type_size(member: Member) -> str:
     from rosidl_generator_c import BASIC_IDL_TYPES_TO_C
 
     type_ = member.type
+    name = member.name
     type_str_prefix = ""
     type_str = ""
+    size = 0
+    nested_type = 0
     if isinstance(type_, AbstractNestedType):
         if isinstance(type_, Array):
+            nested_type = 1
             size = type_.size
         elif isinstance(type_, BoundedSequence):
+            nested_type = 2
             size = type_.maximum_size
         elif isinstance(type_, UnboundedSequence):
-            size = 2 
+            nested_type = 2
+            size = f"data->{name}.size"
             #raise UnsupportedError(f"{type(type_)} not supported")
         else:
             raise UnsupportedError(f"{type(type_)} not supported")
         type_ = type_.value_type
         type_str_prefix += f"{size} * "
-    if isinstance(type_, AbstractString):
-        if isinstance(type_, BoundedString):
-            str_size = type_.maximum_size
-        elif isinstance(type_, UnboundedString):
-            str_size = 16
-            #raise UnsupportedError(f"{type(type_)} not supported")
-        type_str_prefix += f"{str_size} * sizeof(char)"
-    elif isinstance(type_, AbstractWString):
-        if isinstance(type_, BoundedWString):
-            str_size = type_.maximum_size
-        elif isinstance(type_, UnboundedWString):
-            str_size = 16
-            #raise UnsupportedError(f"{type(type_)} not supported")
-        type_str_prefix += f"{str_size} * sizeof(uint16_t)"
+
+    if isinstance(type_, AbstractGenericString):
+        # TODO: compare capacity and size
+        str_size = ""
+        if nested_type == 1:
+            type_str_prefix += f"data->{name}[0].size"
+        elif nested_type == 2:
+            type_str_prefix += f"data->{name}.data[0].size"
+        else:
+            type_str_prefix += f"data->{name}.size"
+
+        if isinstance(type_, AbstractString):
+            type_str_prefix += " * sizeof(char)"
+        elif isinstance(type_, AbstractWString):
+            type_str_prefix += " * sizeof(uint16_t)"
+
     elif isinstance(type_, NamedType):
-        type_str += f"{message_name_prefix}{type_.name}__callbacks.data_encode_size((struct tt_Data*)&data->@({member.name}))"
+        type_str += f"{message_name_prefix}{type_.name}__callbacks.data_encode_size((struct tt_Data*)&data->@({name}))"
     elif isinstance(type_, NamespacedType):
-        type_str += f"{'__'.join(type_.namespaced_name())}__callbacks.data_encode_size((struct tt_Data*)&data->{member.name})"
+        type_str += f"{'__'.join(type_.namespaced_name())}__callbacks.data_encode_size((struct tt_Data*)&data->{name})"
     elif isinstance(type_, BasicType):
         type_str += f"sizeof({BASIC_IDL_TYPES_TO_C[type_.typename]})"
     else:
@@ -230,7 +239,7 @@ from rosidl_parser.definition import UnboundedWString
 class UnsupportedError(Exception):
     pass
 
-size = 0
+sequence_len = 0
 type_ = member.type
 ref_str = ""
 arr_ref_str = ""
@@ -238,41 +247,45 @@ if isinstance(type_, AbstractNestedType):
     if isinstance(type_, Array):
         ref_str = f"&data->{member.name}[0]"
         arr_ref_str = f"&data->{member.name}[i]"
-        size = type_.size
+        sequence_len = type_.size
+    # NOTE: BoundedSequence and UnboundedSequence should be grouped together
     elif isinstance(type_, BoundedSequence):
         ref_str = f"&data->{member.name}.data[0]"
         arr_ref_str = f"&data->{member.name}.data[i]"
-        size = type_.maximum_size
+        sequence_len = type_.maximum_size
     elif isinstance(type_, UnboundedSequence):
         ref_str = f"&data->{member.name}.data[0]"
         arr_ref_str = f"&data->{member.name}.data[i]"
-        size = -1
-        #raise UnsupportedError(f"{type(type_)} not supported")
+        sequence_len = -1
     else:
         raise UnsupportedError(f"{type(type_)} not supported")
     type_ = type_.value_type
-    if isinstance(type_, AbstractString):
-        #raise UnsupportedError(f"{type(type_)} not supported")
-        pass
-    elif isinstance(type_, AbstractWString):
-        #raise UnsupportedError(f"{type(type_)} not supported")
-        pass
 elif isinstance(type_, AbstractNestableType):
     ref_str = f"&data->{member.name}"
     pass
 else:
+    #TODO: implement array of string
+    #Below exception is commented out to avoid build failure
     #raise UnsupportedError(f"{type(type_)} not supported")
     pass
 }@
 @[if isinstance(type_, NamedType) or isinstance(type_, NamespacedType)]@
-@[    if isinstance(type_, NamedType)]@
-@{        type_name = message_name_prefix + type_.name}@
-@[    else]@
-@{        type_name = '__'.join(type_.namespaced_name())}@
-@[    end if]@
-@[    if size != 0]@
+@{
+if isinstance(type_, NamedType):
+    type_name = message_name_prefix + type_.name
+else:
+    type_name = '__'.join(type_.namespaced_name())
+}@
+@[    if sequence_len > 0]@
     size = @(type_name)__callbacks.data_encode_size((struct tt_Data*)@(ref_str));
-    for (int32_t i = 0; i < @(size); ++i) {
+    for (int32_t i = 0; i < @(sequence_len); ++i) {
+        ret = @(type_name)__callbacks.data_@(encode_or_decode)((struct tt_Data*)@(arr_ref_str), payload, size@(encode_or_decode == "encode" ? "" ! ", is_native_endian" ));
+        @(encode_or_decode)d += ret;
+        payload += ret;
+    }
+@[    elif sequence_len == -1]@
+    size = @(type_name)__callbacks.data_encode_size((struct tt_Data*)@(ref_str));
+    for (int32_t i = 0; i < data->@(member.name).size; ++i) {
         ret = @(type_name)__callbacks.data_@(encode_or_decode)((struct tt_Data*)@(arr_ref_str), payload, size@(encode_or_decode == "encode" ? "" ! ", is_native_endian" ));
         @(encode_or_decode)d += ret;
         payload += ret;
