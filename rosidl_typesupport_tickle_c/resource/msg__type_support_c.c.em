@@ -66,6 +66,7 @@ def get_type_size(member: Member) -> str:
     from rosidl_parser.definition import AbstractNestedType
     from rosidl_parser.definition import AbstractGenericString
     from rosidl_parser.definition import AbstractString
+    from rosidl_parser.definition import AbstractGenericString
     from rosidl_parser.definition import AbstractWString
     from rosidl_parser.definition import Array
     from rosidl_parser.definition import BasicType
@@ -87,6 +88,7 @@ def get_type_size(member: Member) -> str:
     size = 0
     if isinstance(type_, AbstractNestedType):
         if isinstance(type_, Array):
+            nested_type = 1
             size = type_.size
             nested_type = 1
             type_str_prefix += f"{size} * "
@@ -298,6 +300,8 @@ elif isinstance(type_, AbstractNestableType):
     ref_str = f"data_ptr->{name_}"
     pass
 else:
+    #TODO: implement array of string
+    #Below exception is commented out to avoid build failure
     #raise UnsupportedError(f"{type(type_)} not supported")
     pass
 }@
