@@ -91,7 +91,7 @@ def get_type_size(member: Member) -> str:
             nested_type = 1
             type_str_prefix += f"{size} * "
         elif isinstance(type_, BoundedSequence):
-            #TODO: compare capacity(type_.maximum_size) and size
+# TODO: compare capacity(type_.maximum_size) and size
             size = f"data_ptr->{name_}.size"
             nested_type = 2
         elif isinstance(type_, UnboundedSequence):
@@ -103,7 +103,7 @@ def get_type_size(member: Member) -> str:
         type_ = type_.value_type
 
     if isinstance(type_, AbstractGenericString):
-        #TODO: compare capacity(type_.maximum_size) and size
+# TODO: compare capacity(type_.maximum_size) and size
         if nested_type == 0:
             str_size = f"data_ptr->{name_}.size"
         elif nested_type == 1:
@@ -283,7 +283,7 @@ if isinstance(type_, AbstractNestedType):
         nested_type = 1
     elif isinstance(type_, BoundedSequence):
         ref_str = f"data_ptr->{name_}.data"
-        #TODO: compare capacity(type_.maximum_size) and size
+# TODO: compare capacity(type_.maximum_size) and size
         size = f"data_ptr->{name_}.size"
         nested_type = 2
     elif isinstance(type_, UnboundedSequence):
@@ -323,23 +323,32 @@ else:
 @[    end if]@
 @[elif isinstance(type_, AbstractGenericString)]@
 @[    if nested_type > 0]@
+@# TODO: do not include size for static size array (nested_type == 1)
 @[        if encode_or_decode == "encode"]@
+    size = @(size);
+    memcpy(payload, &size, sizeof(uint16_t));
+    encoded += sizeof(uint16_t);
+    payload += sizeof(uint16_t);
     for (size_t i = 0; i < @(size); ++i) {
         size = @(ref_str)[i].size;
         memcpy(payload, &size, sizeof(uint16_t));
         encoded += sizeof(uint16_t);
         payload += sizeof(uint16_t);
-        memcpy(payload, &@(ref_str)[i], size);
+        memcpy(payload, @(ref_str)[i].data, size);
         encoded += size;
         payload += size;
     }
 @[        else]@
+    memcpy(&size, payload, sizeof(uint16_t));
+    decoded += sizeof(uint16_t);
+    payload += sizeof(uint16_t);
     for (size_t i = 0; i < @(size); ++i) {
         memcpy(&size, payload, sizeof(uint16_t));
         @(ref_str)[i].size = size;
         decoded += sizeof(uint16_t);
         payload += sizeof(uint16_t);
-        memcpy(&@(ref_str)[i], payload, size);
+@# TODO: use rosidl_runtime_c__String
+        memcpy(@(ref_str)[i].data, payload, size);
         decoded += size;
         payload += size;
     }
@@ -350,15 +359,33 @@ else:
     memcpy(payload, &size, sizeof(uint16_t));
     encoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
-    memcpy(payload, &@(ref_str), size);
+    memcpy(payload, @(ref_str).data, size);
     encoded += size;
     payload += size;
 @[        else]@
+@# TODO: check endian
     memcpy(&size, payload, sizeof(uint16_t));
-    @(ref_str).size = size;
     decoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
-    memcpy(&@(ref_str), payload, size);
+@[            if isinstance(type_, AbstractString)]@
+    if (@(ref_str).data == NULL) {
+        if (rosidl_runtime_c__String__init(&@(ref_str)) == false) {
+            fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+        }
+    }
+    if (rosidl_runtime_c__String__assignn(&@(ref_str), payload, size) == false) {
+        fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+@[            elif isinstance(type_, AbstractWString)]@
+    size /= 2;
+    if (@(ref_str).data == NULL) {
+        if (rosidl_runtime_c__U16String__init(&@(ref_str)) == false) {
+            fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+        }
+    }
+    if (rosidl_runtime_c__U16String__assignn(&@(ref_str), payload, size) == false) {
+        fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+@[            end if]@
+    }
     decoded += size;
     payload += size;
 @[        end if]@
@@ -377,6 +404,7 @@ else:
         payload += size;
     }
 @[        else]@
+@# TODO: use rosidl sequnce
     memcpy(&size, payload, sizeof(uint16_t));
     data_ptr->@(name_).size = size;
     decoded += sizeof(uint16_t);
@@ -386,6 +414,7 @@ else:
     payload += size;
 @[        end if]@
 @[    else]@
+    size = @(get_type_size(member));
 @[        if encode_or_decode == "encode"]@
 @# TODO: include tickle header and use _tt_memcpy
     memcpy(payload, &@(ref_str), size);
@@ -450,9 +479,6 @@ int32_t decode_@(unique_message_identifier)(
     uint16_t  size;
 
     (void)ret;
-    if (@(unique_message_identifier)__callbacks.data_encode_size((struct tt_Data*)data_ptr) > len) {
-        return -1;
-    }
 
 @[for member in message.structure.members]@
 @(generate_encoder("decode", member, get_type_size))
@@ -493,9 +519,6 @@ int32_t convert_from_tickle_to_@(unique_message_identifier)(void* to, void* from
     (void)src;
     return 0;
 }
-
-
-
 
 @# // Collect the callback functions and provide a function to get the type support struct.
 
