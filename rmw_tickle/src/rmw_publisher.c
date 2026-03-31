@@ -72,7 +72,7 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     rmw_tickle_publisher_t* tickle_publisher = malloc(sizeof(rmw_tickle_publisher_t));
     if (tickle_publisher == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for publisher");
-        return NULL;
+        goto fail_pub_create;
     }
 
     // Initialize the publisher structure
@@ -80,10 +80,16 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
 
     // Set up the RMW publisher structure (embedded in tickle_publisher)
     rmw_publisher_t* rmw_publisher = &tickle_publisher->rmw_publisher;
+    char* allocated_topic_name;
 
+    allocated_topic_name = rcutils_strdup(topic_name, tickle_node->allocator);
+    if (allocated_topic_name == NULL) {
+        RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE RMW topic name");
+        goto fail_topic_name_alloc;
+    }
     rmw_publisher->implementation_identifier = RMW_TICKLE_IDENTIFIER;
     rmw_publisher->data = tickle_publisher;
-    rmw_publisher->topic_name = rcutils_strdup(topic_name, tickle_node->allocator);
+    rmw_publisher->topic_name = allocated_topic_name;
     rmw_publisher->options = *publisher_options;
     rmw_publisher->can_loan_messages = false;
 
@@ -95,9 +101,8 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
     struct tt_Topic* topic = malloc(sizeof(struct tt_Topic));
     if (topic == NULL) {
-        free(tickle_publisher);
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE topic");
-        return NULL;
+        goto fail_topic_alloc;
     }
 
     // Initialize topic with basic information and type support callbacks
@@ -109,28 +114,35 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
 //  topic->data_alloc = type_support_callbacks->alloc;
     topic->data_free = (tt_DATA_FREE)type_support_callbacks->data_free;
 
-    topic->name = rcutils_strdup(topic_name, tickle_node->allocator);
+    topic->name = allocated_topic_name;
     topic->history_depth = 10; // Default QoS
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
 
-    RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, topic_name);
+    RCUTILS_LOG_DEBUG("%s: topic_name=%s", __func__, topic_name);
+    RCUTILS_LOG_DEBUG("%s: allocated_topic_name=%s", __func__, allocated_topic_name);
 
     int32_t result = tt_Node_create_publisher(&tickle_publisher->node->tickle_node, &tickle_publisher->tickle_publisher,
-                                              topic, topic_name);
+                                              topic, allocated_topic_name);
     if (result != 0) {
-        free(topic);
-        free(tickle_publisher);
         RMW_SET_ERROR_MSG("Failed to create TickLE publisher");
-        return NULL;
+        goto fail_tickle_pub_create;
     }
 
     // Store topic reference for later use
     tickle_publisher->tickle_publisher.topic = topic;
 
-    RCUTILS_LOG_INFO("Created TickLE publisher for topic: %s", topic_name);
+    RCUTILS_LOG_INFO("Created TickLE publisher for topic: %s", allocated_topic_name);
 
     return rmw_publisher;
+fail_tickle_pub_create:
+    free(topic);
+fail_topic_alloc:
+    free(allocated_topic_name);
+fail_topic_name_alloc:
+    free(tickle_publisher);
+fail_pub_create:
+    return NULL;
 }
 
 rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
@@ -141,6 +153,7 @@ rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
     }
+    RCUTILS_LOG_INFO("Destroying TickLE publisher for topic: %s", publisher->topic_name);
 
     rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
     rmw_tickle_publisher_t* tickle_publisher = (rmw_tickle_publisher_t*)publisher->data;
@@ -151,8 +164,6 @@ rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
             RCUTILS_LOG_WARN("Failed to destroy TickLE publisher, error code: %d", result);
         }
 
-        tickle_node->allocator.deallocate(publisher->topic_name, tickle_node->allocator.state);
-
         // Free the topic if it was allocated
         if (tickle_publisher->tickle_publisher.topic != NULL) {
             tickle_node->allocator.deallocate(tickle_publisher->tickle_publisher.topic->name, tickle_node->allocator.state);
@@ -161,8 +172,6 @@ rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
 
         free(tickle_publisher);
     }
-
-    RCUTILS_LOG_INFO("Destroyed TickLE publisher for topic: %s", publisher->topic_name);
 
     return RMW_RET_OK;
 }
@@ -201,10 +210,6 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
 
     // Publish data through TickLE.
     // 
-    char  temp_str[128] = {0, };
-
-    memcpy(temp_str, ros_message, 127);
-    RCUTILS_LOG_INFO("ros_message=%s", temp_str);
     int32_t result = tt_Publisher_publish(&tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);
 
     if (result != 0) {
