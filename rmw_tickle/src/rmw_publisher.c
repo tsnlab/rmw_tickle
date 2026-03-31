@@ -119,9 +119,6 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
 
-    RCUTILS_LOG_DEBUG("%s: topic_name=%s", __func__, topic_name);
-    RCUTILS_LOG_DEBUG("%s: allocated_topic_name=%s", __func__, allocated_topic_name);
-
     int32_t result = tt_Node_create_publisher(&tickle_publisher->node->tickle_node, &tickle_publisher->tickle_publisher,
                                               topic, allocated_topic_name);
     if (result != 0) {
@@ -132,7 +129,7 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     // Store topic reference for later use
     tickle_publisher->tickle_publisher.topic = topic;
 
-    RCUTILS_LOG_INFO("Created TickLE publisher for topic: %s", allocated_topic_name);
+    RCUTILS_LOG_DEBUG("Created TickLE publisher for topic: %s", allocated_topic_name);
 
     return rmw_publisher;
 fail_tickle_pub_create:
@@ -153,7 +150,7 @@ rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
     }
-    RCUTILS_LOG_INFO("Destroying TickLE publisher for topic: %s", publisher->topic_name);
+    RCUTILS_LOG_DEBUG("Destroying TickLE publisher for topic: %s", publisher->topic_name);
 
     rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
     rmw_tickle_publisher_t* tickle_publisher = (rmw_tickle_publisher_t*)publisher->data;

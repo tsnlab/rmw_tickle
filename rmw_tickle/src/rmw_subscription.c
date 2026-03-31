@@ -151,7 +151,7 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     // Store topic reference for later use
     tickle_subscriber->tickle_subscriber.topic = topic;
 
-    RCUTILS_LOG_INFO("Created TickLE subscription for topic: %s", topic_name);
+    RCUTILS_LOG_DEBUG("Created TickLE subscription for topic: %s", topic_name);
 
     return rmw_subscription;
 fail_tickle_sub_create:
@@ -172,7 +172,7 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
     }
-    RCUTILS_LOG_INFO("Destroyed TickLE subscription for topic: %s", subscription->topic_name);
+    RCUTILS_LOG_DEBUG("Destroyed TickLE subscription for topic: %s", subscription->topic_name);
 
     rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
     rmw_tickle_subscriber_t* tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
