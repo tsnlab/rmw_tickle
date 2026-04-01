@@ -69,14 +69,11 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
 
     // Allocate memory for the publisher
-    rmw_tickle_publisher_t* tickle_publisher = malloc(sizeof(rmw_tickle_publisher_t));
+    rmw_tickle_publisher_t* tickle_publisher = tickle_node->allocator.zero_allocate(1, sizeof(rmw_tickle_publisher_t), tickle_node->allocator.state);
     if (tickle_publisher == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for publisher");
-        goto fail_pub_create;
+        return NULL;
     }
-
-    // Initialize the publisher structure
-    memset(tickle_publisher, 0, sizeof(rmw_tickle_publisher_t));
 
     // Set up the RMW publisher structure (embedded in tickle_publisher)
     rmw_publisher_t* rmw_publisher = &tickle_publisher->rmw_publisher;
@@ -85,7 +82,7 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     allocated_topic_name = rcutils_strdup(topic_name, tickle_node->allocator);
     if (allocated_topic_name == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE RMW topic name");
-        goto fail_topic_name_alloc;
+        goto fail;
     }
     rmw_publisher->implementation_identifier = RMW_TICKLE_IDENTIFIER;
     rmw_publisher->data = tickle_publisher;
@@ -99,10 +96,10 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
 
     // Initialize TickLE publisher
     // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
-    struct tt_Topic* topic = malloc(sizeof(struct tt_Topic));
+    struct tt_Topic* topic = tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Topic), tickle_node->allocator.state);
     if (topic == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE topic");
-        goto fail_topic_alloc;
+        goto fail;
     }
 
     // Initialize topic with basic information and type support callbacks
@@ -123,7 +120,7 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
                                               topic, allocated_topic_name);
     if (result != 0) {
         RMW_SET_ERROR_MSG("Failed to create TickLE publisher");
-        goto fail_tickle_pub_create;
+        goto fail;
     }
 
     // Store topic reference for later use
@@ -132,13 +129,16 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     RCUTILS_LOG_DEBUG("Created TickLE publisher for topic: %s", allocated_topic_name);
 
     return rmw_publisher;
-fail_tickle_pub_create:
-    free(topic);
-fail_topic_alloc:
-    free(allocated_topic_name);
-fail_topic_name_alloc:
-    free(tickle_publisher);
-fail_pub_create:
+fail:
+    if (topic != NULL) {
+        if (topic->name != NULL) {
+            tickle_node->allocator.deallocate(topic->name, tickle_node->allocator.state);
+        }
+        tickle_node->allocator.deallocate(topic, tickle_node->allocator.state);
+    }
+    if (tickle_publisher != NULL) {
+        tickle_node->allocator.deallocate(tickle_publisher, tickle_node->allocator.state);
+    }
     return NULL;
 }
 
@@ -164,10 +164,9 @@ rmw_ret_t rmw_destroy_publisher(rmw_node_t* node, rmw_publisher_t* publisher) {
         // Free the topic if it was allocated
         if (tickle_publisher->tickle_publisher.topic != NULL) {
             tickle_node->allocator.deallocate(tickle_publisher->tickle_publisher.topic->name, tickle_node->allocator.state);
-            free(tickle_publisher->tickle_publisher.topic);
+            tickle_node->allocator.deallocate(tickle_publisher->tickle_publisher.topic, tickle_node->allocator.state);
         }
-
-        free(tickle_publisher);
+        tickle_node->allocator.deallocate(tickle_publisher, tickle_node->allocator.state);
     }
 
     return RMW_RET_OK;
@@ -194,7 +193,7 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
 
     // Create a data structure for TickLE
     /*
-    // NOTE: currently using malloc instead of RMW allocator 
+    // TODO: use RMW allocator instead of malloc
     tickle_data = type_support_callbacks->data_alloc();
     if (tickle_data == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE data");

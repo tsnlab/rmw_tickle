@@ -85,7 +85,7 @@ ament_export_dependencies(
   rosidl_runtime_c
 )
 
-configure_rmw_library($${PROJECT_NAME})
+configure_rmw_library(${PROJECT_NAME})
 
 # RMW CMake function that receives "<language>:<typesupport1>[:<typesupport2>]"
 register_rmw_implementation("c:rosidl_typesupport_c:rosidl_typesupport_tickle_c")
