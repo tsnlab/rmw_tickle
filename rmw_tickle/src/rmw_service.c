@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "rcutils/error_handling.h"
-#include "rcutils/logging_macros.h"
-#include "rmw/error_handling.h"
-#include "rmw/rmw.h"
-#include "rmw_tickle_c/rmw_tickle.h"
+#include <rcutils/allocator.h>
+#include <rcutils/error_handling.h>
+#include <rcutils/logging_macros.h>
+#include <rmw/allocators.h>
+#include <rmw/error_handling.h>
+#include <rmw/rmw.h>
+#include <rosidl_runtime_c/service_type_support_struct.h>
+#include <rosidl_typesupport_tickle_c/message_type_support.h>
+#include <rosidl_typesupport_tickle_c/identifier.h>
+#include <tickle/tickle.h>
 
 rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_type_support_t* type_support,
                                   const char* service_name, const rmw_qos_profile_t* qos_policies) {
@@ -34,15 +37,21 @@ rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_t
         return NULL;
     }
 
+    const rosidl_message_type_support_t* type_support_handle = get_message_typesupport_handle(
+        type_support, ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER); 
+    if (type_support_handle == NULL) {
+        RMW_SET_ERROR_MSG_WITH_FORMAT_STRING("Failed to get type support handler for topic \"%s\"", topic_name);
+        return NULL;
+    }
+
+    rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
+
     // Allocate memory for the service
-    rmw_tickle_service_t* tickle_service = malloc(sizeof(rmw_tickle_service_t));
+    rmw_tickle_service_t* tickle_service = tickle_node->allocator.zero_allocate(1, sizeof(rmw_tickle_service_t), tickle_node->allocator.state);
     if (tickle_service == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for service");
         return NULL;
     }
-
-    // Initialize the service structure
-    memset(tickle_service, 0, sizeof(rmw_tickle_service_t));
 
     // Set up the RMW service structure (embedded in tickle_service)
     rmw_service_t* rmw_service = &tickle_service->rmw_service;
@@ -57,21 +66,23 @@ rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_t
 
     // Initialize TickLE server
     // Create a dummy service for now - in a real implementation, this would be created based on type_support
-    struct tt_Service* service = malloc(sizeof(struct tt_Service));
+    struct tt_Service* service = tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Service), tickle_node->allocator.state);
     if (service == NULL) {
-        free(tickle_service);
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE service");
-        return NULL;
+        goto fail;
     }
 
     // Initialize service with basic information
+    const service_type_support_callbacks_t* type_support_callbacks = type_support_handle->data;
+    const message_type_support_callbacks_t* request_callbacks = type_support_callbacks->request_members();
+    const message_type_support_callbacks_t* response_callbacks = type_support_callbacks->response_members();
     service->name = service_name;
-    service->request_size = 0;  // Will be set based on message type
-    service->response_size = 0; // Will be set based on message type
-    service->request_encode_size = NULL;
-    service->request_encode = NULL;
-    service->request_decode = NULL;
-    service->request_free = NULL;
+    service->request_size = request_callbacks->data_size;
+    service->request_encode_size = (tt_DATA_ENCODE_SIZE)request_callbacks->data_encode_size;
+    service->request_encode = (tt_DATA_ENCODE)request_callbacks->data_encode;
+    service->request_decode = (tt_DATA_DECODE)request_callbacks->data_decode;
+    service->request_free = (tt_DATA_FREE)request_callbacks->data_free;
+    service->response_size = 0;
     service->response_encode_size = NULL;
     service->response_encode = NULL;
     service->response_decode = NULL;
