@@ -12,20 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdint.h>
-#include <stdlib.h>
-
-#include <rcutils/allocator.h>
 #include <rcutils/logging_macros.h>
 #include <rcutils/strdup.h>
-#include <rmw/allocators.h>
 #include <rmw/error_handling.h>
-#include <rmw/rmw.h>
 #include <rosidl_runtime_c/message_type_support_struct.h>
 #include <rosidl_typesupport_tickle_c/message_type_support.h>
 #include <rosidl_typesupport_tickle_c/identifier.h>
 
-#include "rmw_tickle_c/rmw_tickle.h"
+#include <rmw_tickle_c/rmw_tickle.h>
 
 int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len);
 
@@ -54,6 +48,10 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(qos_policies, NULL);
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(subscription_options, NULL);
 
+    struct tt_Topic* topic = NULL;
+    rmw_tickle_subscriber_t* rmw_tickle_subscriber = NULL;
+    rmw_tickle_node_t* rmw_tickle_node = (rmw_tickle_node_t*)node->data;
+
     if (strcmp(node->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return NULL;
@@ -67,41 +65,33 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
         return NULL;
     }
 
-    rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
-
     // Allocate memory for the subscription
-    rmw_tickle_subscriber_t* tickle_subscriber = tickle_node->allocator.zero_allocate(1, sizeof(rmw_tickle_subscriber_t), tickle_node->allocator.state);
-    if (tickle_subscriber == NULL) {
+    rmw_tickle_subscriber = rmw_tickle_node->allocator.zero_allocate(1, sizeof(rmw_tickle_subscriber_t), rmw_tickle_node->allocator.state);
+    if (rmw_tickle_subscriber == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for subscription");
         goto fail;
     }
+    // Store node and type support references
+    rmw_tickle_subscriber->node = rmw_tickle_node;
+    rmw_tickle_subscriber->type_support = type_support_handle;
 
-    // Initialize the subscription structure
-    memset(tickle_subscriber, 0, sizeof(rmw_tickle_subscriber_t));
-
-    // Set up the RMW subscription structure (embedded in tickle_subscriber)
-    rmw_subscription_t* rmw_subscription = &tickle_subscriber->rmw_subscription;
-    char* allocated_topic_name;
-
-    allocated_topic_name = rcutils_strdup(topic_name, tickle_node->allocator);
+    char* allocated_topic_name = rcutils_strdup(topic_name, rmw_tickle_node->allocator);
     if (allocated_topic_name == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE RMW topic name");
         goto fail;
     }
 
+    // Set up the RMW subscription structure (embedded in tickle_subscriber)
+    rmw_subscription_t* rmw_subscription = &rmw_tickle_subscriber->rmw_subscription;
     rmw_subscription->implementation_identifier = RMW_TICKLE_IDENTIFIER;
-    rmw_subscription->data = tickle_subscriber;
+    rmw_subscription->data = rmw_tickle_subscriber;
     rmw_subscription->topic_name = allocated_topic_name;
     rmw_subscription->options = *subscription_options;
     rmw_subscription->can_loan_messages = false;
 
-    // Store node and type support references
-    tickle_subscriber->node = tickle_node;
-    tickle_subscriber->type_support = type_support_handle;
-
     // Initialize TickLE subscriber
     // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
-    struct tt_Topic* topic = tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Topic), tickle_node->allocator.state);
+    topic = rmw_tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Topic), rmw_tickle_node->allocator.state);
     if (topic == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE topic");
         goto fail;
@@ -126,29 +116,26 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     tt_SUBSCRIBER_CALLBACK callback = NULL; // We'll handle messages in rmw_take instead
 
     RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, topic_name);
-
-    int32_t result = tt_Node_create_subscriber(&tickle_subscriber->node->tickle_node,
-                                               &tickle_subscriber->tickle_subscriber, topic, topic_name, callback);
+    int32_t result = tt_Node_create_subscriber(&rmw_tickle_subscriber->node->tickle_node,
+                                               &rmw_tickle_subscriber->tickle_subscriber, topic, topic_name, callback);
     if (result != 0) {
         RMW_SET_ERROR_MSG("Failed to create TickLE subscriber");
         goto fail;
     }
 
     // Store topic reference for later use
-    tickle_subscriber->tickle_subscriber.topic = topic;
-
+    rmw_tickle_subscriber->tickle_subscriber.topic = topic;
     RCUTILS_LOG_DEBUG("Created TickLE subscription for topic: %s", topic_name);
-
     return rmw_subscription;
 fail:
     if (topic != NULL) {
         if (topic->name != NULL) {
-            tickle_node->allocator.deallocate(topic->name, tickle_node->allocator.state);
+            rmw_tickle_node->allocator.deallocate(topic->name, rmw_tickle_node->allocator.state);
         }
-        tickle_node->allocator.deallocate(topic, tickle_node->allocator.state);
+        rmw_tickle_node->allocator.deallocate(topic, rmw_tickle_node->allocator.state);
     }
-    if (tickle_subscriber != NULL) {
-        tickle_node->allocator.deallocate(tickle_subscriber, tickle_node->allocator.state);
+    if (rmw_tickle_subscriber != NULL) {
+        rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber, rmw_tickle_node->allocator.state);
     }
     return NULL;
 }
@@ -163,21 +150,21 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
     }
     RCUTILS_LOG_DEBUG("Destroyed TickLE subscription for topic: %s", subscription->topic_name);
 
-    rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
-    rmw_tickle_subscriber_t* tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
-    if (tickle_subscriber != NULL) {
+    rmw_tickle_node_t* rmw_tickle_node = (rmw_tickle_node_t*)node->data;
+    rmw_tickle_subscriber_t* rmw_tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
+    if (rmw_tickle_subscriber != NULL) {
         // Destroy TickLE subscriber
-        int32_t result = tt_Subscriber_destroy(&tickle_subscriber->tickle_subscriber);
+        int32_t result = tt_Subscriber_destroy(&rmw_tickle_subscriber->tickle_subscriber);
         if (result != 0) {
             RCUTILS_LOG_WARN("Failed to destroy TickLE subscriber, error code: %d", result);
         }
 
         // Free the topic if it was allocated
-        if (tickle_subscriber->tickle_subscriber.topic != NULL) {
-            tickle_node->allocator.deallocate(tickle_subscriber->tickle_subscriber.topic->name, tickle_node->allocator.state);
-            tickle_node->allocator.deallocate(tickle_subscriber->tickle_subscriber.topic, tickle_node->allocator.state);
+        if (rmw_tickle_subscriber->tickle_subscriber.topic != NULL) {
+            rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
+            rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber->tickle_subscriber.topic, rmw_tickle_node->allocator.state);
         }
-        tickle_node->allocator.deallocate(tickle_subscriber, tickle_node->allocator.state);
+        rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber, rmw_tickle_node->allocator.state);
     }
 
     return RMW_RET_OK;
@@ -197,8 +184,8 @@ rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bo
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
     }
 
-    rmw_tickle_subscriber_t* tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
-    if (tickle_subscriber == NULL) {
+    rmw_tickle_subscriber_t* rmw_tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
+    if (rmw_tickle_subscriber == NULL) {
         RMW_SET_ERROR_MSG("Subscription data is NULL");
         return RMW_RET_ERROR;
     }
@@ -206,7 +193,7 @@ rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bo
     // Poll the TickLE node for incoming messages
     // In a real implementation, this would check for new messages from the network
     *taken = false;
-    int32_t len = __TEMP__tt_receive_packet(&tickle_subscriber->node->tickle_node, ros_message, tt_MAX_BUFFER_LENGTH);
+    int32_t len = __TEMP__tt_receive_packet(&rmw_tickle_subscriber->node->tickle_node, ros_message, tt_MAX_BUFFER_LENGTH);
     if (len == -1) {
         // Timeout
         // RCUTILS_LOG_INFO("Subscriber Timeout");
