@@ -39,7 +39,7 @@ rmw_client_t* rmw_create_client(const rmw_node_t* node, const rosidl_service_typ
 
     // Get type support handler from type support library
     const rosidl_service_type_support_t* type_support_handle = get_service_typesupport_handle(
-        type_support, ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER); 
+        type_support, ROSIDL_TYPESUPPORT_TICKLE_C__IDENTIFIER);
     if (type_support_handle == NULL) {
         RMW_SET_ERROR_MSG_WITH_FORMAT_STRING("Failed to get type support handler for service \"%s\"", service_name);
         return NULL;
