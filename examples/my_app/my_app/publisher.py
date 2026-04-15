@@ -1,14 +1,14 @@
 import rclpy
 from rclpy.node import Node
-from custom_message.msg import Simple
+from my_message.msg import MyMessage
 from time import time_ns
 
 def main():
     rclpy.init(args=None)
     node = Node('publisher_node')
-    publisher = node.create_publisher(Simple, 'simple_topic', 10)
+    publisher = node.create_publisher(MyMessage, 'my_topic', 10)
     def pub_callback():
-        msg = Simple()
+        msg = MyMessage()
         msg.header = 1
         msg.body = time_ns()
         publisher.publish(msg)

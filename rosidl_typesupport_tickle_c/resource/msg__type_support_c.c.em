@@ -31,6 +31,7 @@ include_parts = [package_name] + list(interface_path.parents[0].parts) + [
 include_base = '/'.join(include_parts)
 
 header_files = [
+    'stdio.h',
     'stdint.h',
     'stdbool.h',
     'string.h',
@@ -521,7 +522,8 @@ int32_t decode_@(unique_message_identifier)(
 
     (void)ret;
 
-@# TODO: check len
+@# TODO: check encoded size
+@# TODO: check is_native_endian and use _tt_bswap_16
 @[for member in message.structure.members]@
 @(generate_encoder("decode", member, get_type_size))
 @[end for]@
