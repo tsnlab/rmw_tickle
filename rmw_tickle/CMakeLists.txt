@@ -12,6 +12,7 @@ find_package(rmw REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_tickle_c REQUIRED)
+find_package(tracetools REQUIRED)
 
 # if(NOT DEFINED ENV{TICKLE_PATH} OR "$ENV{TICKLE_PATH}" STREQUAL "")
 #   message(FATAL_ERROR "Environment variable TICKLE_PATH is not set or is empty.")
@@ -65,6 +66,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rcutils
   rosidl_runtime_c
   rosidl_typesupport_tickle_c
+  tracetools
 )
 
 # Set include directories for the target
@@ -74,6 +76,7 @@ ament_target_dependencies(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   pthread
   rosidl_typesupport_tickle_c::rosidl_typesupport_tickle_c
+  tracetools::tracetools
   # $ENV{TICKLE_PATH}/libtickle.a
 )
 

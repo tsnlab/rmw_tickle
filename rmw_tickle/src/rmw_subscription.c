@@ -21,7 +21,9 @@
 
 #include <rmw_tickle_c/rmw_tickle.h>
 
-int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len);
+#include <tracetools/tracetools.h>
+
+int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len, uint64_t* timestamp);
 
 rmw_ret_t rmw_init_subscription_allocation(const rosidl_message_type_support_t* type_support,
                                            const rosidl_runtime_c__Sequence__bound* message_bounds,
@@ -130,7 +132,7 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
 fail:
     if (topic != NULL) {
         if (topic->name != NULL) {
-            rmw_tickle_node->allocator.deallocate(topic->name, rmw_tickle_node->allocator.state);
+            rmw_tickle_node->allocator.deallocate((void*)topic->name, rmw_tickle_node->allocator.state);
         }
         rmw_tickle_node->allocator.deallocate(topic, rmw_tickle_node->allocator.state);
     }
@@ -161,7 +163,7 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
 
         // Free the topic if it was allocated
         if (rmw_tickle_subscriber->tickle_subscriber.topic != NULL) {
-            rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
+            rmw_tickle_node->allocator.deallocate((void*)rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
             rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber->tickle_subscriber.topic, rmw_tickle_node->allocator.state);
         }
         rmw_tickle_node->allocator.deallocate(rmw_tickle_subscriber, rmw_tickle_node->allocator.state);
@@ -170,15 +172,13 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
     return RMW_RET_OK;
 }
 
-rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bool* taken,
-                   rmw_subscription_allocation_t* allocation) {
-    RCUTILS_CHECK_ARGUMENT_FOR_NULL(subscription, RMW_RET_INVALID_ARGUMENT);
-    RCUTILS_CHECK_ARGUMENT_FOR_NULL(ros_message, RMW_RET_INVALID_ARGUMENT);
-    RCUTILS_CHECK_ARGUMENT_FOR_NULL(taken, RMW_RET_INVALID_ARGUMENT);
+rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_message, bool* taken,
+                             rmw_message_info_t* message_info, rmw_subscription_allocation_t* allocation) {
     (void)allocation; // Not used in this implementation
-
     uint32_t ip = 0;
     uint16_t port = 0;
+    uint64_t source_timestamp = 0;
+
     if (strcmp(subscription->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
@@ -193,7 +193,8 @@ rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bo
     // Poll the TickLE node for incoming messages
     // In a real implementation, this would check for new messages from the network
     *taken = false;
-    int32_t len = __TEMP__tt_receive_packet(&rmw_tickle_subscriber->node->tickle_node, ros_message, tt_MAX_BUFFER_LENGTH);
+    int32_t len = __TEMP__tt_receive_packet(&rmw_tickle_subscriber->node->tickle_node,
+        ros_message, tt_MAX_BUFFER_LENGTH, &source_timestamp);
     if (len == -1) {
         // Timeout
         // RCUTILS_LOG_INFO("Subscriber Timeout");
@@ -219,20 +220,34 @@ rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bo
     // - Handle message deserialization
     // - Support different QoS policies
 
+    if (message_info) {
+        message_info->source_timestamp = source_timestamp;
+    }
     *taken = true;
+    TRACETOOLS_TRACEPOINT(
+        rmw_take,
+        (void *)subscription,
+        (void *)ros_message,
+        source_timestamp,
+        *taken);
     return RMW_RET_OK;
 }
 
 rmw_ret_t rmw_take_with_info(const rmw_subscription_t* subscription, void* ros_message, bool* taken,
                              rmw_message_info_t* message_info, rmw_subscription_allocation_t* allocation) {
-    (void)subscription;
-    (void)ros_message;
-    (void)taken;
-    (void)message_info;
-    (void)allocation;
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(subscription, RMW_RET_INVALID_ARGUMENT);
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(ros_message, RMW_RET_INVALID_ARGUMENT);
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(taken, RMW_RET_INVALID_ARGUMENT);
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(message_info, RMW_RET_INVALID_ARGUMENT);
+    return rmw_take_internal(subscription, ros_message, taken, message_info, allocation);
+}
 
-    // TODO: We should fill in the message_info, but the demo still works without it
-    return rmw_take(subscription, ros_message, taken, allocation);
+rmw_ret_t rmw_take(const rmw_subscription_t* subscription, void* ros_message, bool* taken,
+                   rmw_subscription_allocation_t* allocation) {
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(subscription, RMW_RET_INVALID_ARGUMENT);
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(ros_message, RMW_RET_INVALID_ARGUMENT);
+    RCUTILS_CHECK_ARGUMENT_FOR_NULL(taken, RMW_RET_INVALID_ARGUMENT);
+    return rmw_take_internal(subscription, ros_message, taken, NULL, allocation);
 }
 
 rmw_ret_t rmw_take_serialized_message(const rmw_subscription_t* subscription,
