@@ -24,12 +24,6 @@
 #include "rmw/rmw.h"
 #include "rmw_tickle_c/rmw_tickle.h"
 
-/**
- * @param  context
- * @param  name
- * @param  namespace_
- * @return 
- */
 rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char* namespace_) {
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(context, NULL);
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(name, NULL);

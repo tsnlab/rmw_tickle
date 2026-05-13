@@ -88,7 +88,6 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     rmw_publisher->can_loan_messages = false;
 
     // Initialize TickLE publisher
-    // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
     topic = rmw_tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Topic), rmw_tickle_node->allocator.state);
     if (topic == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE topic");
@@ -101,7 +100,6 @@ rmw_publisher_t* rmw_create_publisher(const rmw_node_t* node, const rosidl_messa
     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)type_support_callbacks->data_encode_size;
     topic->data_encode = (tt_DATA_ENCODE)type_support_callbacks->data_encode;
     topic->data_decode = (tt_DATA_DECODE)type_support_callbacks->data_decode;
-//  topic->data_alloc = type_support_callbacks->alloc;
     topic->data_free = (tt_DATA_FREE)type_support_callbacks->data_free;
 
     topic->name = allocated_topic_name;
@@ -181,18 +179,6 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
     }
 
     const message_type_support_callbacks_t* type_support_callbacks = rmw_tickle_publisher->type_support->data;
-
-    /*
-    // Create a data structure for TickLE
-    // TODO: use RMW allocator instead of malloc
-    tickle_data = type_support_callbacks->data_alloc();
-    if (tickle_data == NULL) {
-        RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE data");
-        return RMW_RET_ERROR;
-    }
-    type_support_callbacks->convert_data_to_tickle(tickle_data, ros_message);
-    int32_t result = tt_Publisher_publish(&tickle_publisher->tickle_publisher, tickle_data);
-    */
 
     // Publish data through TickLE.
     int32_t result = tt_Publisher_publish(&rmw_tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);

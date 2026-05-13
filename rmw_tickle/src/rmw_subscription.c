@@ -92,7 +92,6 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     rmw_subscription->can_loan_messages = false;
 
     // Initialize TickLE subscriber
-    // TODO: Create a dummy topic for now - in a real implementation, this would be created based on type_support
     topic = rmw_tickle_node->allocator.zero_allocate(1, sizeof(struct tt_Topic), rmw_tickle_node->allocator.state);
     if (topic == NULL) {
         RMW_SET_ERROR_MSG("Failed to allocate memory for TickLE topic");
@@ -105,7 +104,6 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     topic->data_encode_size = (tt_DATA_ENCODE_SIZE)type_support_callbacks->data_encode_size;
     topic->data_encode = (tt_DATA_ENCODE)type_support_callbacks->data_encode;
     topic->data_decode = (tt_DATA_DECODE)type_support_callbacks->data_decode;
-//  topic->data_alloc = type_support_callbacks->alloc;
     topic->data_free = (tt_DATA_FREE)type_support_callbacks->data_free;
 
     topic->name = allocated_topic_name;
@@ -113,8 +111,6 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
 
-    // Create a dummy callback for now
-    // In a real implementation, this would handle incoming messages
     tt_SUBSCRIBER_CALLBACK callback = NULL; // We'll handle messages in rmw_take instead
 
     RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, topic_name);
@@ -197,7 +193,6 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         ros_message, tt_MAX_BUFFER_LENGTH, &source_timestamp);
     if (len == -1) {
         // Timeout
-        // RCUTILS_LOG_INFO("Subscriber Timeout");
         return RMW_RET_OK;
     } else if (len == -2) {
         // TickLE internal packets
@@ -207,18 +202,7 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         RMW_SET_ERROR_MSG("Subscriber I/O Error");
         return RMW_RET_ERROR;
     }
-
-    // For now, we'll simulate message reception
-    // In a real implementation, we would:
-    // 1. Check if any messages match this subscription's topic
-    // 2. Deserialize the message data into ros_message
-    // 3. Handle message ordering and QoS
-
-    // This is a simplified implementation - we'll just return no message available for now
-    // In a complete implementation, we would need to:
-    // - Implement proper message queuing
-    // - Handle message deserialization
-    // - Support different QoS policies
+    // TODO: message ordering and QoS
 
     if (message_info) {
         message_info->source_timestamp = source_timestamp;
