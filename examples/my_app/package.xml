@@ -4,7 +4,7 @@
   <name>my_app</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="halim9512@gmail.com">harim</maintainer>
+  <maintainer email="harim@tsnlab.com">harim</maintainer>
   <license>TODO: License declaration</license>
 
   <exec_depend>rclpy</exec_depend>

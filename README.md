@@ -47,7 +47,7 @@ Default RMW is `rmw_fastrtps_cpp`. To select RMW,
 ```bash
 export RMW_IMPLEMENTATION=<rmw-name>
 ```
-`<rmw-name>` is name of RMW such as `rmw_tickle`, `rmw_fastrtps_cpp`, `rmw_zenoh`, etc.
+`<rmw-name>` is name of RMW such as `rmw_tickle`, `rmw_fastrtps_cpp`.
 
 
 ## Run demo

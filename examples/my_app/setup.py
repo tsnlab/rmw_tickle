@@ -14,7 +14,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='harim',
-    maintainer_email='halim9512@gmail.com',
+    maintainer_email='harim@tsnlab.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     extras_require={
