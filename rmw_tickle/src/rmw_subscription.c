@@ -21,7 +21,9 @@
 
 #include <rmw_tickle_c/rmw_tickle.h>
 
+#ifdef MEASURE_LATENCY
 #include <tracetools/tracetools.h>
+#endif
 
 int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len, uint64_t* timestamp);
 
@@ -208,12 +210,14 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         message_info->source_timestamp = source_timestamp;
     }
     *taken = true;
+#ifdef MEASURE_LATENCY
     TRACETOOLS_TRACEPOINT(
         rmw_take,
         (void *)subscription,
         (void *)ros_message,
         source_timestamp,
         *taken);
+#endif
     return RMW_RET_OK;
 }
 

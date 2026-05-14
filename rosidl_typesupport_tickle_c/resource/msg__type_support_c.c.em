@@ -254,6 +254,7 @@ ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @
 
 typedef @(unique_message_identifier) _@(message_name)_type;
 
+@# TODO: separate generating encoder and decoder.
 @[def generate_encoder(encode_or_decode: str, member: Member, get_type_size)]@
 @{  
 from rosidl_parser.definition import AbstractGenericString
@@ -532,8 +533,6 @@ int32_t decode_@(unique_message_identifier)(
 
 void* alloc_@(unique_message_identifier)(void)
 {
-//  uint32_t  size = sizeof(@(tickle_type));
-//  return malloc(size);
     return NULL;
 }
 
@@ -541,7 +540,6 @@ void free_@(unique_message_identifier)(void* raw)
 {
     @(tickle_type)* data_ptr = raw;
     (void)data_ptr;
-//  free(data_ptr);
 }
 
 int32_t convert_to_tickle_from_@(unique_message_identifier)(void* to, void* from)

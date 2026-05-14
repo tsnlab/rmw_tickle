@@ -14,6 +14,10 @@ find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_tickle_c REQUIRED)
 find_package(tracetools REQUIRED)
 
+if(MEASURE_LATENCY)
+  add_compile_options(-DMEASURE_LATENCY)
+endif()
+
 # if(NOT DEFINED ENV{TICKLE_PATH} OR "$ENV{TICKLE_PATH}" STREQUAL "")
 #   message(FATAL_ERROR "Environment variable TICKLE_PATH is not set or is empty.")
 # endif()
