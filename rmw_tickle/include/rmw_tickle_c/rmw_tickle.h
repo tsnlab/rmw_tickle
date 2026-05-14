@@ -6,6 +6,7 @@
 #include "rmw/rmw.h"
 #include "rosidl_runtime_c/message_type_support_struct.h"
 #include "rosidl_runtime_c/service_type_support_struct.h"
+#include "rmw_tickle_c/ring_buffer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,6 +57,7 @@ typedef struct rmw_tickle_subscriber_t {
     struct tt_Subscriber tickle_subscriber;
     rmw_tickle_node_t* node;
     const rosidl_message_type_support_t* type_support;
+    struct ring_buffer rx_queue;
 } rmw_tickle_subscriber_t;
 
 // TickLE specific client data
