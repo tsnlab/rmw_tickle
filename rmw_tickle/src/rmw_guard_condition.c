@@ -47,7 +47,7 @@ rmw_guard_condition_t* rmw_create_guard_condition(rmw_context_t* context) {
     tickle_guard_condition->allocator = rcutils_get_default_allocator();
     tickle_guard_condition->has_triggered = false;
 
-    RCUTILS_LOG_INFO("Created TickLE guard condition");
+    RCUTILS_LOG_DEBUG("Created TickLE guard condition");
 
     return rmw_guard_condition;
 }
@@ -65,7 +65,7 @@ rmw_ret_t rmw_destroy_guard_condition(rmw_guard_condition_t* guard_condition) {
         free(tickle_guard_condition);
     }
 
-    RCUTILS_LOG_INFO("Destroyed TickLE guard condition");
+    RCUTILS_LOG_DEBUG("Destroyed TickLE guard condition");
 
     return RMW_RET_OK;
 }

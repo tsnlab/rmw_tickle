@@ -59,7 +59,7 @@ rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_condition
 
     tickle_wait_set->guard_condition_count = max_conditions;
 
-    RCUTILS_LOG_INFO("Created TickLE wait set with %zu max conditions", max_conditions);
+    RCUTILS_LOG_DEBUG("Created TickLE wait set with %zu max conditions", max_conditions);
     return rmw_wait_set;
 }
 
@@ -81,7 +81,7 @@ rmw_ret_t rmw_destroy_wait_set(rmw_wait_set_t* wait_set) {
         rmw_free(tickle_wait_set);
     }
 
-    RCUTILS_LOG_INFO("Destroyed TickLE wait set");
+    RCUTILS_LOG_DEBUG("Destroyed TickLE wait set");
     return RMW_RET_OK;
 }
 

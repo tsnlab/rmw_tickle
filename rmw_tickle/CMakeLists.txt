@@ -11,7 +11,12 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
-find_package(rosidl_typesupport_introspection_c REQUIRED)
+find_package(rosidl_typesupport_tickle_c REQUIRED)
+find_package(tracetools REQUIRED)
+
+if(MEASURE_LATENCY)
+  add_compile_options(-DMEASURE_LATENCY)
+endif()
 
 # if(NOT DEFINED ENV{TICKLE_PATH} OR "$ENV{TICKLE_PATH}" STREQUAL "")
 #   message(FATAL_ERROR "Environment variable TICKLE_PATH is not set or is empty.")
@@ -22,7 +27,7 @@ include_directories(include)
 include_directories(tickle/include)
 
 # Create rmw_tickle_c library
-add_library(rmw_tickle SHARED
+add_library(${PROJECT_NAME} SHARED
   src/rmw_init.c
   src/rmw_get_implementation_identifier.c
   src/rmw_get_serialization_format.c
@@ -60,50 +65,54 @@ add_library(rmw_tickle SHARED
 )
 
 # Link libraries
-ament_target_dependencies(rmw_tickle
+ament_target_dependencies(${PROJECT_NAME}
   rmw
   rcutils
   rosidl_runtime_c
-  rosidl_typesupport_introspection_c
+  rosidl_typesupport_tickle_c
+  tracetools
 )
 
 # Set include directories for the target
 # target_include_directories(rmw_tickle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tickle/include)
 
 # Link with pthread and tickle library
-target_link_libraries(rmw_tickle
+target_link_libraries(${PROJECT_NAME}
   pthread
+  rosidl_typesupport_tickle_c::rosidl_typesupport_tickle_c
+  tracetools::tracetools
   # $ENV{TICKLE_PATH}/libtickle.a
 )
 
-# Install
-install(TARGETS rmw_tickle
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
-
-install(DIRECTORY include/
-  DESTINATION include
-)
-
 # Export
-ament_export_include_directories(include)
-ament_export_libraries(rmw_tickle)
+ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(
   rmw
   rcutils
   rosidl_runtime_c
-  rosidl_typesupport_introspection_c
 )
 
 configure_rmw_library(${PROJECT_NAME})
 
-register_rmw_implementation("c:rosidl_typesupport_introspection_c")
+# RMW CMake function that receives "<language>:<typesupport1>[:<typesupport2>]"
+register_rmw_implementation("c:rosidl_typesupport_c:rosidl_typesupport_tickle_c")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+# Install
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
 ament_package()

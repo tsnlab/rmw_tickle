@@ -8,14 +8,17 @@
   <license>GPLv3</license>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
-  <buildtool_depend>rosidl_cmake</buildtool_depend>
-  <buildtool_export_depend>ament_cmake_ros</buildtool_export_depend>
-  <buildtool_export_depend>rosidl_cmake</buildtool_export_depend>
 
-  <depend>rmw</depend>
-  <depend>rcutils</depend>
-  <depend>rosidl_runtime_c</depend>
-  <depend>rosidl_typesupport_introspection_c</depend>
+  <build_depend>rosidl_cmake</build_depend>
+  <build_depend>rcutils</build_depend>
+  <build_depend>rmw</build_depend>
+  <build_depend>rosidl_runtime_c</build_depend>
+  <build_depend>rosidl_typesupport_tickle_c</build_depend>
+  <build_depend>rcutils</build_depend>
+  <build_depend>tracetools</build_depend>
+
+  <exec_depend>rcutils</exec_depend>
+  <exec_depend>rmw</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
