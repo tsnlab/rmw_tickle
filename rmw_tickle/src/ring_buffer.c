@@ -1,6 +1,12 @@
 #include <rmw_tickle_c/ring_buffer.h>
 
-int ring_buffer_create(struct ring_buffer* buffer, rcutils_allocator_t allocator, uint32_t elem_size, uint32_t capacity) {
+struct ring_buffer ring_buffer_create(rcutils_allocator_t allocator, uint32_t elem_size, uint32_t capacity) {
+    struct ring_buffer buffer = {0,};
+    ring_buffer_init(&buffer, allocator, elem_size, capacity);
+    return buffer;
+}
+
+int ring_buffer_init(struct ring_buffer* buffer, rcutils_allocator_t allocator, uint32_t elem_size, uint32_t capacity) {
     if (buffer == NULL || elem_size == 0 || capacity == 0) {
         return -1;
     }
@@ -21,7 +27,7 @@ void ring_buffer_destroy(struct ring_buffer* buffer, rcutils_allocator_t allocat
 }
 
 // read_end is inclusive, write_end is exclusive index
-int ring_buffer_push(struct ring_buffer* buffer, void* element) {
+int ring_buffer_push(struct ring_buffer* buffer, void* push_from) {
     uint32_t write_end = buffer->write_end;
     uint32_t new_write_end = (write_end + 1) % (buffer->capacity + 1);
 
@@ -34,7 +40,7 @@ int ring_buffer_push(struct ring_buffer* buffer, void* element) {
     return 0;
 }
 
-int ring_buffer_pop(struct ring_buffer* buffer, void* element) {
+int ring_buffer_pop(struct ring_buffer* buffer, void* pop_to) {
     uint32_t read_end = buffer->read_end;
 
     // nothing to read
