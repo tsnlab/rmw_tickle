@@ -37,7 +37,7 @@ extern message_type_support_callbacks_t @(unique_message_identifier)__callbacks;
 
 ROSIDL_TYPESUPPORT_TICKLE_C_PUBLIC_@(package_name)
 const rosidl_message_type_support_t*
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name])))();
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_tickle_c, @(', '.join([package_name] + list(interface_path.parents[0].parts) + [message.structure.namespaced_type.name])))(void);
 
 #ifdef __cplusplus
 }
