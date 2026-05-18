@@ -110,6 +110,8 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     topic->data_free = (tt_DATA_FREE)type_support_callbacks->data_free;
 
     topic->name = allocated_topic_name;
+    // TODO: QoS KEEP_ALL -> ring buffer size depends on resource limit (it's one of DDS QoS but ROS 2 does not include it)
+    //           KEEP_LAST -> ring b uffer size depends on history_depth
     topic->history_depth = 10; // Default QoS
     topic->deadline_duration = 0;
     topic->lifespan_duration = 0;
@@ -120,12 +122,18 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
         goto fail;
     }
 
-    // TODO: store received data to rx queue in callback
+    int32_t lock_initialized = 1;
+    if (buffer_lock_init(&rmw_tickle_subscriber->rx_lock) < 0) {
+        lock_initialized = 0;
+        RMW_SET_ERROR_MSG("Failed to initialize Rx lock");
+        goto fail;
+    }
+
     tt_SUBSCRIBER_CALLBACK callback = receive_message;
 
-    RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, topic_name);
+    RCUTILS_LOG_DEBUG("%s :topic_name=%s", __func__, allocated_topic_name);
     int32_t result = tt_Node_create_subscriber(&rmw_tickle_subscriber->node->tickle_node,
-                                               &rmw_tickle_subscriber->tickle_subscriber, topic, topic_name, callback);
+                                               &rmw_tickle_subscriber->tickle_subscriber, topic, allocated_topic_name, callback);
     if (result != 0) {
         RMW_SET_ERROR_MSG("Failed to create TickLE subscriber");
         goto fail;
@@ -144,7 +152,10 @@ fail:
     }
     if (rmw_tickle_subscriber != NULL) {
         if (rmw_tickle_subscriber->rx_queue.data != NULL) {
-            ring_buffer_destroy(rmw_tickle_subscribrer->rx_queue, allocator);
+            ring_buffer_destroy(&rmw_tickle_subscribrer->rx_queue, allocator);
+        }
+        if (lock_initialized == 1) {
+            buffer_lock_term(&rmw_tickle_subscriber->rx_lock);
         }
         allocator.deallocate(rmw_tickle_subscriber, allocator.state);
     }
@@ -164,9 +175,8 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
     rmw_tickle_node_t* rmw_tickle_node = (rmw_tickle_node_t*)node->data;
     rmw_tickle_subscriber_t* rmw_tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
     if (rmw_tickle_subscriber != NULL) {
-        if (rmw_tickle_subscriber->rx_queue.data != NULL) {
-            ring_buffer_destroy(rmw_tickle_subscribrer->rx_queue, allocator);
-        }
+        buffer_lock_term(&rmw_tickle_subscriber->rx_lock);
+        ring_buffer_destroy(&rmw_tickle_subscribrer->rx_queue, allocator);
         // Free the topic if it was allocated
         if (rmw_tickle_subscriber->tickle_subscriber.topic != NULL) {
             rmw_tickle_node->allocator.deallocate((void*)rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
@@ -202,13 +212,14 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         return RMW_RET_ERROR;
     }
 
-    // Poll the TickLE node for incoming messages
-    // In a real implementation, this would check for new messages from the network
     *taken = false;
 
-    // TODO: lock/unlock around ring_buffer_pop
-    ring_buffer_pop(rmw_tickle_subscriber->rx_queue, ros_message);
+    // TODO: consider deadline QoS
+    buffer_lock(&rmw_tickle_subscriber->rx_lock);
+    ring_buffer_pop(&rmw_tickle_subscriber->rx_queue, ros_message);
+    buffer_unlock(&rmw_tickle_subscriber->rx_lock);
 
+    // TODO: move conditional statements to Rx in polling thread
     if (len == -1) {
         // Timeout
         return RMW_RET_OK;
@@ -221,7 +232,6 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         return RMW_RET_ERROR;
     }
     // TODO: message ordering and QoS
-
     if (message_info) {
         message_info->source_timestamp = source_timestamp;
     }
@@ -356,9 +366,11 @@ void receive_message(struct tt_Subscriber* subscriber, uint64_t time, uint16_t s
     rmw_tickle_subscriber_t* rmw_sub;
     int ret;
 
-    rmw_sub = (rmw_tickle_subscriber_t*)((void*)subscriber - offsetof(rmw_tickle_subscriber_t, tickle_subscriber));
-    // TOOD: lock/unlock around push
-    ret = ring_buffer_push(rmw_sub->rx_queue, (void*)data); 
+    rmw_sub = (rmw_tickle_subscriber_t*)((char*)subscriber - offsetof(rmw_tickle_subscriber_t, tickle_subscriber));
+    buffer_lock(&rmw_sub->rx_lock)
+    ret = ring_buffer_push(&rmw_sub->rx_queue, (void*)data);
+    buffer_unlock(&rmw_sub->rx_lock);
+    // TODO: overwrite according to QoS policy
     if (ret < 0) {
         RCUTILS_LOG_WARN("topic \"%s\" Rx queue(size=%u) is full", rmw_sub->rmw_subscription.topic_name,
             rmw_sub->rx_queue.capacity);
