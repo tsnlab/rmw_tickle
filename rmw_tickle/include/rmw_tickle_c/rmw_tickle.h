@@ -7,6 +7,7 @@
 #include "rosidl_runtime_c/message_type_support_struct.h"
 #include "rosidl_runtime_c/service_type_support_struct.h"
 #include "rmw_tickle_c/ring_buffer.h"
+#include "rmw_tickle_c/thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,6 +23,8 @@ extern "C" {
 extern const char* const rmw_tickle_identifier;
 extern const char* const rmw_tickle_serialization_format;
 
+struct rmw_tickle_node_t;
+
 // TickLE context implementation
 typedef struct rmw_tickle_context_impl_t {
     // Graph guard condition for node discovery
@@ -29,11 +32,19 @@ typedef struct rmw_tickle_context_impl_t {
     // Placeholder for TickLE context data
     // This can be extended with TickLE-specific context information
     int dummy; // Temporary field to avoid empty struct
+    struct rmw_tickle_node_t* node_list_head;
 } rmw_tickle_context_impl_t;
+
+struct rmw_tickle_node_t* get_next_tickle_node(struct rmw_tickle_node_t* node);
 
 // RMW implementation functions
 const char* rmw_get_implementation_identifier(void);
 rmw_init_options_t rmw_get_zero_initialized_init_options(void);
+
+struct list_node {
+    struct list_node* next;
+    struct list_node* prev;
+};
 
 // TickLE specific node data
 typedef struct rmw_tickle_node_t {
@@ -41,6 +52,7 @@ typedef struct rmw_tickle_node_t {
     struct tt_Node tickle_node;
     rcutils_allocator_t allocator;
     const rmw_context_t* context; // Store context reference
+    struct list_node list_node;
 } rmw_tickle_node_t;
 
 // TickLE specific publisher data
@@ -58,6 +70,7 @@ typedef struct rmw_tickle_subscriber_t {
     rmw_tickle_node_t* node;
     const rosidl_message_type_support_t* type_support;
     struct ring_buffer rx_queue;
+    buffer_lock_t rx_lock;
 } rmw_tickle_subscriber_t;
 
 // TickLE specific client data
