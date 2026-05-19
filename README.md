@@ -19,7 +19,7 @@ To install ROS 2 Jazzy, Follow [ROS 2 Installation Guide](https://docs.ros.org/e
 cd ~/ros2_jazzy/src
 git clone https://github.com/tsnlab/rmw_tickle
 cd rmw_tickle
-git checkout typesupport-dev
+git checkout demo # branch name containing this README.md
 git submodule update --init
 ```
 
