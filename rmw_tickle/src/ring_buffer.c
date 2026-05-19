@@ -10,7 +10,7 @@ int32_t ring_buffer_init(struct ring_buffer* buffer, rcutils_allocator_t allocat
     if (buffer == NULL || elem_size == 0 || capacity == 0) {
         return -1;
     }
-    buffer->elem_size = elem_size;
+    buffer->elem_size = 8 * (1 + (elem_size - 1) / 8); // 8 byte alignment
     buffer->capacity = capacity;
     buffer->read_end = 0;
     buffer->write_end = 0;
