@@ -87,6 +87,18 @@ rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char
         RCUTILS_LOG_ERROR("Failed to create TickLE node, error code: %d", result);
         return NULL;
     }
+    rmw_tickle_context_impl_t* context_impl = (rmw_tickle_context_impl_t*)context->impl;
+    rmw_tickle_node_t* head_node;
+
+    // Insert created node into node list
+    mutex_lock(&context_impl->polling_lock);
+    head_node = context_impl->node_list_head;
+    if (head_node != NULL) {
+        head_node->prev = &tickle_node->list_node;
+        tickle_node->list_node.next = head_node;
+    }
+    context_impl->node_list_head = tickle_node;
+    mutex_unlock(&context_impl->polling_lock);
 
     RCUTILS_LOG_INFO("Created TickLE node: %s%s", namespace_, name);
 
@@ -108,7 +120,14 @@ rmw_ret_t rmw_destroy_node(rmw_node_t* node) {
         if (result != 0) {
             RCUTILS_LOG_WARN("Failed to destroy TickLE node, error code: %d", result);
         }
-
+        mutex_lock(&context_impl->polling_lock);
+        if (tickle_node->list_node.prev != NULL) {
+            tickle_node->list_node.prev = tickle_node->list_node.next;
+        }
+        if (tickle_node->list_node.next != NULL) {
+            tickle_node->list_node.next = tickle_node->list_node.prev;
+        }
+        mutex_unlock(&context_impl->polling_lock);
         tickle_node->allocator.deallocate(node->name, tickle_node->allocator.state);
         tickle_node->allocator.deallocate(node->namespace_, tickle_node->allocator.state);
 

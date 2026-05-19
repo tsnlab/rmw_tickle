@@ -7,6 +7,8 @@
 #include "rmw/rmw.h"
 #include "rmw_tickle_c/rmw_tickle.h"
 
+void* polling_thread_routine(void* arg);
+
 rmw_ret_t rmw_init_options_init(rmw_init_options_t* init_options, rcutils_allocator_t allocator) {
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(init_options, RMW_RET_INVALID_ARGUMENT);
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(allocator.allocate, RMW_RET_INVALID_ARGUMENT);
@@ -94,6 +96,10 @@ rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {
     // Initialize graph guard condition
     impl->graph_guard_condition.implementation_identifier = RMW_TICKLE_IDENTIFIER;
     impl->graph_guard_condition.data = NULL;
+    impl->polling_flag = true;
+
+    mutex_init(&impl->polling_lock);
+    thread_create(&impl->polling_thread, polling_thread_routine, impl);
 
     context->impl = (rmw_context_impl_t*)impl;
 
@@ -123,6 +129,15 @@ rmw_ret_t rmw_context_fini(rmw_context_t* context) {
 
     // Free the context implementation
     if (context->impl != NULL) {
+        rmw_tickle_context_impl_t* impl = context->impl;
+
+        mutex_lock(impl->polling_lock);
+        impl->exit_polling = true;
+        mutex_unlock(impl->polling_lock);
+        thread_join(&impl->polling_thread);
+        if (mutex_term(&impl->polling_lock) != 0) {
+            RCUTILS_LOG_ERROR("Failed to destroy mutex");
+        }
         context->options.allocator.deallocate(context->impl, context->options.allocator.state);
         context->impl = NULL;
     }
@@ -134,4 +149,33 @@ rmw_ret_t rmw_context_fini(rmw_context_t* context) {
     }
 
     return RMW_RET_OK;
+}
+
+void* polling_thread_routine(void* arg) {
+    rmw_tickle_context_impl_t* impl = arg;
+    rmw_tickle_node_t** head_ptr;
+    rmw_tickle_node_t* node;
+    uint8_t buffer[tt_MAX_BUFFER_LENGTH];
+
+    while (1) {
+        mutex_lock(impl->polling_lock);
+        head_ptr = impl->node_list_head;
+        node = *head_ptr;
+        while (node != NULL) {
+            mutex_lock(&node->tx_lock);
+            // Update TickLE Node, Flush Tx buffer periodically
+            tt_Node_run_scheduler(&node->tickle_node);
+            mutex_unlock(&node->tx_lock);
+            tt_Node_receive_packet(&node->tickle_node, buffer, tt_MAX_BUFFER_LENGTH);
+            // TODO: implement get_next_node
+            node = get_next_node(node);
+        }
+        if (impl->polling_flag == false) {
+            mutex_unlock(impl->polling_lock);
+            return NULL;
+        }
+        mutex_unlock(impl->polling_lock);
+        thread_sleep(100 * tt_MICROSECOND);
+    }
+    return NULL;
 }

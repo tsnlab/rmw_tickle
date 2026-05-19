@@ -166,6 +166,8 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(publisher, RMW_RET_INVALID_ARGUMENT);
     RCUTILS_CHECK_ARGUMENT_FOR_NULL(ros_message, RMW_RET_INVALID_ARGUMENT);
     (void)allocation; // Not used in this implementation
+    rmw_tickle_node_t* node;
+    int32_t result;
 
     if (strcmp(publisher->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
@@ -181,7 +183,11 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
     const message_type_support_callbacks_t* type_support_callbacks = rmw_tickle_publisher->type_support->data;
 
     // Publish data through TickLE.
-    int32_t result = tt_Publisher_publish(&rmw_tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);
+    // TODO: tx lock
+    node = rmw_tickle_publisher->node;
+    mutex_lock(&node->tx_lock);
+    result = tt_Publisher_publish(&rmw_tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);
+    mutex_unlock(&node->tx_lock);
 
     if (result != 0) {
         RMW_SET_ERROR_MSG("Failed to publish message via TickLE");

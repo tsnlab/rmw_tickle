@@ -25,7 +25,7 @@
 #include <tracetools/tracetools.h>
 #endif
 
-static tt_SUBSCRIBER_CALLBACK receive_message;
+void receive_message(struct tt_Subscriber* subscriber, uint64_t time, uint16_t seq_no, struct tt_Data* data);
 
 rmw_ret_t rmw_init_subscription_allocation(const rosidl_message_type_support_t* type_support,
                                            const rosidl_runtime_c__Sequence__bound* message_bounds,
@@ -123,7 +123,7 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     }
 
     int32_t lock_initialized = 1;
-    if (buffer_lock_init(&rmw_tickle_subscriber->rx_lock) < 0) {
+    if (mutex_init(&rmw_tickle_subscriber->rx_lock) < 0) {
         lock_initialized = 0;
         RMW_SET_ERROR_MSG("Failed to initialize Rx lock");
         goto fail;
@@ -152,10 +152,10 @@ fail:
     }
     if (rmw_tickle_subscriber != NULL) {
         if (rmw_tickle_subscriber->rx_queue.data != NULL) {
-            ring_buffer_destroy(&rmw_tickle_subscribrer->rx_queue, allocator);
+            ring_buffer_destroy(&rmw_tickle_subscriber->rx_queue, allocator);
         }
         if (lock_initialized == 1) {
-            buffer_lock_term(&rmw_tickle_subscriber->rx_lock);
+            mutex_term(&rmw_tickle_subscriber->rx_lock);
         }
         allocator.deallocate(rmw_tickle_subscriber, allocator.state);
     }
@@ -175,8 +175,8 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
     rmw_tickle_node_t* rmw_tickle_node = (rmw_tickle_node_t*)node->data;
     rmw_tickle_subscriber_t* rmw_tickle_subscriber = (rmw_tickle_subscriber_t*)subscription->data;
     if (rmw_tickle_subscriber != NULL) {
-        buffer_lock_term(&rmw_tickle_subscriber->rx_lock);
-        ring_buffer_destroy(&rmw_tickle_subscribrer->rx_queue, allocator);
+        mutex_term(&rmw_tickle_subscriber->rx_lock);
+        ring_buffer_destroy(&rmw_tickle_subscriber->rx_queue, rmw_tickle_node->allocator);
         // Free the topic if it was allocated
         if (rmw_tickle_subscriber->tickle_subscriber.topic != NULL) {
             rmw_tickle_node->allocator.deallocate((void*)rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
@@ -215,22 +215,10 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
     *taken = false;
 
     // TODO: consider deadline QoS
-    buffer_lock(&rmw_tickle_subscriber->rx_lock);
+    mutex_lock(&rmw_tickle_subscriber->rx_lock);
     ring_buffer_pop(&rmw_tickle_subscriber->rx_queue, ros_message);
-    buffer_unlock(&rmw_tickle_subscriber->rx_lock);
+    mutex_unlock(&rmw_tickle_subscriber->rx_lock);
 
-    // TODO: move conditional statements to Rx in polling thread
-    if (len == -1) {
-        // Timeout
-        return RMW_RET_OK;
-    } else if (len == -2) {
-        // TickLE internal packets
-        return RMW_RET_OK;
-    } else if (len < 0) {
-        // I/O Error
-        RMW_SET_ERROR_MSG("Subscriber I/O Error");
-        return RMW_RET_ERROR;
-    }
     // TODO: message ordering and QoS
     if (message_info) {
         message_info->source_timestamp = source_timestamp;
@@ -367,9 +355,9 @@ void receive_message(struct tt_Subscriber* subscriber, uint64_t time, uint16_t s
     int ret;
 
     rmw_sub = (rmw_tickle_subscriber_t*)((char*)subscriber - offsetof(rmw_tickle_subscriber_t, tickle_subscriber));
-    buffer_lock(&rmw_sub->rx_lock)
+    mutex_lock(&rmw_sub->rx_lock);
     ret = ring_buffer_push(&rmw_sub->rx_queue, (void*)data);
-    buffer_unlock(&rmw_sub->rx_lock);
+    mutex_unlock(&rmw_sub->rx_lock);
     // TODO: overwrite according to QoS policy
     if (ret < 0) {
         RCUTILS_LOG_WARN("topic \"%s\" Rx queue(size=%u) is full", rmw_sub->rmw_subscription.topic_name,
