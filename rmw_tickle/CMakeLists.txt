@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rmw_tickle VERSION 0.0.1 LANGUAGES C)
+project(rmw_tickle VERSION 0.0.1)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,6 +13,7 @@ find_package(rcutils REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_tickle_c REQUIRED)
 find_package(tracetools REQUIRED)
+find_package(Threads REQUIRED)
 
 if(MEASURE_LATENCY)
   add_compile_options(-DMEASURE_LATENCY)
@@ -58,6 +59,8 @@ add_library(${PROJECT_NAME} SHARED
   src/rmw_dynamic_message.c
   src/rmw_serialization_support.c
   src/rmw_callback.c
+  src/thread_pthread.c
+  src/ring_buffer.c
   tickle/src/encoding.c
   tickle/src/hal_linux.c
   tickle/src/log.c
@@ -78,7 +81,7 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Link with pthread and tickle library
 target_link_libraries(${PROJECT_NAME}
-  pthread
+  Threads::Threads
   rosidl_typesupport_tickle_c::rosidl_typesupport_tickle_c
   tracetools::tracetools
   # $ENV{TICKLE_PATH}/libtickle.a
