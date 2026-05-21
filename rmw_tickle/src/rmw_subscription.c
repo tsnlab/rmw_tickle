@@ -125,7 +125,7 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
     int32_t lock_initialized = 1;
     if (mutex_init(&rmw_tickle_subscriber->rx_lock) < 0) {
         lock_initialized = 0;
-        RMW_SET_ERROR_MSG("Failed to initialize Rx lock");
+        RMW_SET_ERROR_MSG("Failed to initialize Rx mutex");
         goto fail;
     }
 
@@ -201,6 +201,7 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
     uint16_t port = 0;
     uint64_t source_timestamp = 0;
 
+    *taken = false;
     if (strcmp(subscription->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
@@ -212,18 +213,18 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         return RMW_RET_ERROR;
     }
 
-    *taken = false;
-
-    // TODO: consider deadline QoS
+    *taken = true;
     mutex_lock(&rmw_tickle_subscriber->rx_lock);
-    ring_buffer_pop(&rmw_tickle_subscriber->rx_queue, ros_message);
+    // TODO: deadline, message ordering (QoS)
+    if (ring_buffer_pop(&rmw_tickle_subscriber->rx_queue, ros_message) != 0) {
+        *taken = false;
+    }
     mutex_unlock(&rmw_tickle_subscriber->rx_lock);
 
-    // TODO: message ordering and QoS
+    // TODO: bring source_timestamp from TickLE
     if (message_info) {
         message_info->source_timestamp = source_timestamp;
     }
-    *taken = true;
 #ifdef MEASURE_LATENCY
     TRACETOOLS_TRACEPOINT(
         rmw_take,
@@ -359,7 +360,7 @@ void receive_message(struct tt_Subscriber* subscriber, uint64_t time, uint16_t s
     ret = ring_buffer_push(&rmw_sub->rx_queue, (void*)data);
     mutex_unlock(&rmw_sub->rx_lock);
     // TODO: overwrite according to QoS policy
-    if (ret < 0) {
+    if (ret != 0) {
         RCUTILS_LOG_WARN("topic \"%s\" Rx queue(size=%u) is full", rmw_sub->rmw_subscription.topic_name,
             rmw_sub->rx_queue.capacity);
     }
