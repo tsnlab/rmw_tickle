@@ -90,12 +90,18 @@ rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char
     rmw_tickle_context_impl_t* context_impl = (rmw_tickle_context_impl_t*)context->impl;
     rmw_tickle_node_t* head_node;
 
+    if (mutex_init(&tickle_node->tx_lock) != 0) {
+        tt_Node_destroy(&tickle_node->tickle_node);
+        free(tickle_node);
+        RMW_SET_ERROR_MSG("Failed to initialize Tx mutex");
+        return NULL;
+    }
     // Insert created node into node list
     mutex_lock(&context_impl->polling_lock);
     head_node = context_impl->node_list_head;
     if (head_node != NULL) {
-        head_node->prev = &tickle_node->list_node;
-        tickle_node->list_node.next = head_node;
+        head_node->list_node.prev = &tickle_node->list_node;
+        tickle_node->list_node.next = &head_node->list_node;
     }
     context_impl->node_list_head = tickle_node;
     mutex_unlock(&context_impl->polling_lock);
@@ -117,25 +123,34 @@ rmw_ret_t rmw_destroy_node(rmw_node_t* node) {
     if (tickle_node != NULL) {
         // Destroy TickLE node
         int32_t result = tt_Node_destroy(&tickle_node->tickle_node);
+        rmw_tickle_context_impl_t* context = (rmw_tickle_context_impl_t*)tickle_node->context->impl;
+        rmw_tickle_mutex_t* polling_lock = &context->polling_lock;
+
         if (result != 0) {
             RCUTILS_LOG_WARN("Failed to destroy TickLE node, error code: %d", result);
         }
-        mutex_lock(&context_impl->polling_lock);
+        mutex_lock(polling_lock);
+        if (mutex_term(&tickle_node->tx_lock) != 0) {
+            RCUTILS_LOG_ERROR("Failed to destroy Tx lock");
+        }
         if (tickle_node->list_node.prev != NULL) {
             tickle_node->list_node.prev = tickle_node->list_node.next;
         }
         if (tickle_node->list_node.next != NULL) {
             tickle_node->list_node.next = tickle_node->list_node.prev;
         }
-        mutex_unlock(&context_impl->polling_lock);
+        if (tickle_node->list_node.next == NULL && tickle_node->list_node.prev == NULL) {
+            context->node_list_head = NULL;
+        }
+        mutex_unlock(polling_lock);
+        RCUTILS_LOG_INFO("Destroyed TickLE node: %s%s", node->namespace_ ? node->namespace_ : "",
+                         node->name ? node->name : "");
         tickle_node->allocator.deallocate(node->name, tickle_node->allocator.state);
         tickle_node->allocator.deallocate(node->namespace_, tickle_node->allocator.state);
 
         free(tickle_node);
     }
 
-    RCUTILS_LOG_INFO("Destroyed TickLE node: %s%s", node->namespace_ ? node->namespace_ : "",
-                     node->name ? node->name : "");
 
     return RMW_RET_OK;
 }

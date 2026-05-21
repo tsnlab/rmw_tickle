@@ -151,6 +151,13 @@ rmw_ret_t rmw_context_fini(rmw_context_t* context) {
     return RMW_RET_OK;
 }
 
+static rmw_tickle_node_t* get_next_node(rmw_tickle_node_t* node) {
+    if (node->list_node.next == NULL) {
+        return NULL;
+    }
+    return (rmw_tickle_node_t*)((char*)node->list_node.next - offsetof(rmw_tickle_node_t, list_node));
+}
+
 void* polling_thread_routine(void* arg) {
     rmw_tickle_context_impl_t* impl = arg;
     rmw_tickle_node_t** head_ptr;

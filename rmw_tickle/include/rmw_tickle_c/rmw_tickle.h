@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include <tickle/tickle.h>
 
 #include "rcutils/allocator.h"
@@ -38,13 +39,12 @@ typedef struct rmw_tickle_context_impl_t {
     rmw_tickle_thread_t polling_thread;
 } rmw_tickle_context_impl_t;
 
-struct rmw_tickle_node_t* get_next_node(struct rmw_tickle_node_t* node);
-
 // RMW implementation functions
 const char* rmw_get_implementation_identifier(void);
 rmw_init_options_t rmw_get_zero_initialized_init_options(void);
 
 struct list_node {
+    struct list_node* prev;
     struct list_node* next;
 };
 
