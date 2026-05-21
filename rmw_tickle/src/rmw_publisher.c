@@ -183,7 +183,6 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
     const message_type_support_callbacks_t* type_support_callbacks = rmw_tickle_publisher->type_support->data;
 
     // Publish data through TickLE.
-    // TODO: tx lock
     node = rmw_tickle_publisher->node;
     mutex_lock(&node->tx_lock);
     result = tt_Publisher_publish(&rmw_tickle_publisher->tickle_publisher, (struct tt_Data*)ros_message);
@@ -193,8 +192,6 @@ rmw_ret_t rmw_publish(const rmw_publisher_t* publisher, const void* ros_message,
         RMW_SET_ERROR_MSG("Failed to publish message via TickLE");
         return RMW_RET_ERROR;
     }
-
-    tt_Node_flush(&rmw_tickle_publisher->node->tickle_node);
 
     RCUTILS_LOG_DEBUG("Successfully published message via TickLE");
     return RMW_RET_OK;

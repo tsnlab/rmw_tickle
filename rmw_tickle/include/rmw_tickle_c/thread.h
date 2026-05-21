@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stdatomic.h>
-#include <rmw_tickle_c/rmw_tickle.h>
+#include <stdint.h>
 
 #ifdef __linux__
 #include <pthread.h>

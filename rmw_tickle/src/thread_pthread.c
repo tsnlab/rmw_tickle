@@ -5,7 +5,7 @@ int32_t thread_create(rmw_tickle_thread_t* thread, void* (*routine)(void*), void
 }
 
 int32_t thread_join(rmw_tickle_thread_t* thread) {
-    return pthread_join(&thread->thread, NULL);
+    return pthread_join(thread->thread, NULL);
 }
 
 int32_t thread_sleep(uint32_t nanoseconds) {
