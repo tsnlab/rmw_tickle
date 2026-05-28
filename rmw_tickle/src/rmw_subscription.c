@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <time.h>
+
 #include <rcutils/logging_macros.h>
 #include <rcutils/strdup.h>
 #include <rmw/error_handling.h>
@@ -206,8 +208,6 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
     uint32_t ip = 0;
     uint16_t port = 0;
     uint64_t source_timestamp = 0;
-
-    *taken = false;
     if (strcmp(subscription->implementation_identifier, RMW_TICKLE_IDENTIFIER) != 0) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
@@ -218,14 +218,23 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         RMW_SET_ERROR_MSG("Subscription data is NULL");
         return RMW_RET_ERROR;
     }
+    static uint64_t count = 0;
+    static uint64_t second = 0;
+    struct timespec ts;
+
+    ++count;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    if (second != ts.tv_sec) {
+        printf("rmw_take second=%lu, count=%lu\n", second, count);
+        second = ts.tv_sec;
+        count = 0;
+    }
 
     *taken = true;
-    mutex_lock(&rmw_tickle_subscriber->rx_lock);
     // TODO: deadline, message ordering (QoS)
     if (ring_buffer_pop(&rmw_tickle_subscriber->rx_queue, ros_message) != 0) {
         *taken = false;
     }
-    mutex_unlock(&rmw_tickle_subscriber->rx_lock);
 
 #ifdef MEASURE_LATENCY
     ring_buffer_pop(&rmw_tickle_subscriber->rx_timestamp_queue, &source_timestamp);

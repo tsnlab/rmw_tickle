@@ -109,6 +109,7 @@ typedef struct rmw_tickle_wait_set_t {
     rmw_tickle_guard_condition_t** guard_conditions;
     size_t guard_condition_count;
     rcutils_allocator_t allocator;
+    struct rmw_tickle_node_t* node_list_head;
 } rmw_tickle_wait_set_t;
 
 #ifdef __cplusplus

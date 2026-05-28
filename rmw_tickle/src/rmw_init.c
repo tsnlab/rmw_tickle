@@ -102,7 +102,6 @@ rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {
 
     mutex_init(&impl->polling_lock);
     thread_create(&impl->tx_thread, tx_thread_routine, impl);
-    thread_create(&impl->rx_thread, rx_thread_routine, impl);
 
     context->impl = (rmw_context_impl_t*)impl;
 
@@ -124,7 +123,6 @@ rmw_ret_t rmw_shutdown(rmw_context_t* context) {
     impl->polling_flag = false;
     mutex_unlock(&impl->polling_lock);
     thread_join(&impl->tx_thread);
-    thread_join(&impl->rx_thread);
     if (mutex_term(&impl->polling_lock) != 0) {
         RCUTILS_LOG_ERROR("Failed to destroy mutex. make sure to unlock before destroy.");
     }
@@ -170,9 +168,9 @@ void* tx_thread_routine(void* arg) {
 //      mutex_lock(&impl->polling_lock);
         node = impl->node_list_head;
         while (node != NULL) {
-            mutex_lock(&node->tx_lock);
+//          mutex_lock(&node->tx_lock);
             tt_Node_peek_scheduler(&node->tickle_node); // Update TickLE Node, Flush Tx buffer periodically
-            mutex_unlock(&node->tx_lock);
+//          mutex_unlock(&node->tx_lock);
             node = get_next_node(node);
         }
         if (impl->polling_flag == false) {
@@ -180,28 +178,7 @@ void* tx_thread_routine(void* arg) {
             return NULL;
         }
 //      mutex_unlock(&impl->polling_lock);
-        thread_sleep(1 * tt_NODE_TX_INTERVAL);
-    }
-    return NULL;
-}
-
-void* rx_thread_routine(void* arg) {
-    rmw_tickle_context_impl_t* impl = arg;
-    rmw_tickle_node_t* node;
-    uint8_t buffer[tt_MAX_BUFFER_LENGTH] = {0, };
-
-    while (1) {
-//      mutex_lock(&impl->polling_lock);
-        node = impl->node_list_head;
-        while (node != NULL) {
-            tt_Node_receive_packet(&node->tickle_node, buffer, tt_MAX_BUFFER_LENGTH);
-            node = get_next_node(node);
-        }
-        if (impl->polling_flag == false) {
-//          mutex_unlock(&impl->polling_lock);
-            return NULL;
-        }
-//      mutex_unlock(&impl->polling_lock);
+        thread_sleep(tt_NODE_TX_INTERVAL);
     }
     return NULL;
 }

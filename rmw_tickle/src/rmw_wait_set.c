@@ -40,6 +40,8 @@ rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_condition
     // Initialize the wait set structure
     memset(tickle_wait_set, 0, sizeof(rmw_tickle_wait_set_t));
 
+    tickle_wait_set->node_list_head = ((rmw_tickle_context_impl_t*)context->impl)->node_list_head;
+
     // Set up the RMW wait set structure (embedded in tickle_wait_set)
     rmw_wait_set_t* rmw_wait_set = &tickle_wait_set->rmw_wait_set;
 
@@ -85,6 +87,13 @@ rmw_ret_t rmw_destroy_wait_set(rmw_wait_set_t* wait_set) {
     return RMW_RET_OK;
 }
 
+static rmw_tickle_node_t* get_next_node(rmw_tickle_node_t* node) {
+    if (node->list_node.next == NULL) {
+        return NULL;
+    }
+    return (rmw_tickle_node_t*)((char*)node->list_node.next - offsetof(rmw_tickle_node_t, list_node));
+}
+
 rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* guard_conditions,
                    rmw_services_t* services, rmw_clients_t* clients, rmw_events_t* events, rmw_wait_set_t* wait_set,
                    const rmw_time_t* wait_timeout) {
@@ -110,11 +119,44 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
     // 5. Handle events
     // 6. Wait for the specified timeout or until something is ready
 
-    // Initialize all arrays to indicate no items are ready
-    if (subscriptions != NULL) {
-        // TODO: There should be a way to check if there are any subscriptions that are ready to be taken
-        return RMW_RET_OK;
+    static uint64_t count = 0;
+    static uint64_t second = 0;
+    struct timespec ts;
+
+    ++count;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    if (second != ts.tv_sec) {
+        printf("rmw_wait second=%lu, count=%lu\n", second, count);
+        second = ts.tv_sec;
+        count = 0;
     }
+
+    struct timespec ts1;
+    struct timespec ts2;
+    bool timeout = true;
+    uint8_t buffer[tt_MAX_BUFFER_LENGTH] = {0, };
+    struct rmw_tickle_node_t* node = tickle_wait_set->node_list_head;
+
+    // NOTE: if any packet including node update arrives, timeout is false.
+    clock_gettime(CLOCK_REALTIME, &ts1);
+    while (node != NULL) {
+        if (tt_Node_receive_packet(&node->tickle_node, buffer, tt_MAX_BUFFER_LENGTH) >= 0) {
+            timeout = false;
+        }
+        node = get_next_node(node);
+    }
+    clock_gettime(CLOCK_REALTIME, &ts2);
+    if (subscriptions != NULL) {
+        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
+            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
+            
+            if (ring_buffer_size(&sub->rx_queue) == 0) {
+                subscriptions->subscribers[i] = NULL;
+            }
+        }
+    }
+    uint64_t elapsed_time = (ts2.tv_sec - ts1.tv_sec) * 1000000000UL + (ts2.tv_nsec - ts1.tv_nsec);
+    printf("elapsed_time=%lu us\n", elapsed_time / 1000);
     if (guard_conditions != NULL) {
         guard_conditions->guard_condition_count = 0;
     }
@@ -128,21 +170,5 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
         events->event_count = 0;
     }
 
-    // Poll TickLE nodes for activity
-    // This is a simplified implementation - in reality, we would need to:
-    // - Track which nodes are associated with each subscription/service/client
-    // - Poll only the relevant nodes
-    // - Handle multiple nodes efficiently
-
-    // For now, we'll just simulate a timeout
-    if (wait_timeout != NULL) {
-        // Convert timeout to milliseconds for sleep
-        uint64_t timeout_ms = wait_timeout->sec * 1000 + wait_timeout->nsec / 1000000;
-        if (timeout_ms > 0) {
-            // Simple sleep simulation - in reality, we would poll TickLE nodes
-            usleep(timeout_ms * 1000); // Convert to microseconds
-        }
-    }
-
-    return RMW_RET_TIMEOUT;
+    return timeout ? RMW_RET_TIMEOUT : RMW_RET_OK;
 }
