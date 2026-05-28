@@ -134,10 +134,12 @@ rmw_ret_t rmw_destroy_node(rmw_node_t* node) {
             RCUTILS_LOG_ERROR("Failed to destroy Tx lock");
         }
         if (tickle_node->list_node.prev != NULL) {
-            tickle_node->list_node.prev = tickle_node->list_node.next;
+            tickle_node->list_node.prev->next = tickle_node->list_node.next;
+        } else {
+            context->node_list_head = tickle_node->list_node.next;
         }
         if (tickle_node->list_node.next != NULL) {
-            tickle_node->list_node.next = tickle_node->list_node.prev;
+            tickle_node->list_node.next->prev = tickle_node->list_node.prev;
         }
         if (tickle_node->list_node.next == NULL && tickle_node->list_node.prev == NULL) {
             context->node_list_head = NULL;

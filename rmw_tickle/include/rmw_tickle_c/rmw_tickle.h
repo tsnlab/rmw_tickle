@@ -36,7 +36,8 @@ typedef struct rmw_tickle_context_impl_t {
     struct rmw_tickle_node_t* node_list_head;
     bool polling_flag;
     rmw_tickle_mutex_t polling_lock;
-    rmw_tickle_thread_t polling_thread;
+    rmw_tickle_thread_t tx_thread;
+    rmw_tickle_thread_t rx_thread;
 } rmw_tickle_context_impl_t;
 
 // RMW implementation functions
