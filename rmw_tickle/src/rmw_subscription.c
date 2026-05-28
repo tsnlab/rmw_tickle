@@ -121,6 +121,9 @@ rmw_subscription_t* rmw_create_subscription(const rmw_node_t* node, const rosidl
         RMW_SET_ERROR_MSG("Failed to allocate memory for Rx queue");
         goto fail;
     }
+#ifdef MEASURE_LATENCY
+    rmw_tickle_subscriber->rx_timestamp_queue = ring_buffer_create(allocator, sizeof(uint64_t), topic->history_depth);
+#endif
 
     int32_t lock_initialized = 1;
     if (mutex_init(&rmw_tickle_subscriber->rx_lock) < 0) {
@@ -177,6 +180,9 @@ rmw_ret_t rmw_destroy_subscription(rmw_node_t* node, rmw_subscription_t* subscri
     if (rmw_tickle_subscriber != NULL) {
         mutex_term(&rmw_tickle_subscriber->rx_lock);
         ring_buffer_destroy(&rmw_tickle_subscriber->rx_queue, rmw_tickle_node->allocator);
+#ifdef MEASURE_LATENCY
+        ring_buffer_destroy(&rmw_tickle_subscriber->rx_timestamp_queue, rmw_tickle_node->allocator);
+#endif
         // Free the topic if it was allocated
         if (rmw_tickle_subscriber->tickle_subscriber.topic != NULL) {
             rmw_tickle_node->allocator.deallocate((void*)rmw_tickle_subscriber->tickle_subscriber.topic->name, rmw_tickle_node->allocator.state);
@@ -221,11 +227,8 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
     }
     mutex_unlock(&rmw_tickle_subscriber->rx_lock);
 
-    // TODO: bring source_timestamp from TickLE
-    if (message_info) {
-        message_info->source_timestamp = source_timestamp;
-    }
 #ifdef MEASURE_LATENCY
+    ring_buffer_pop(&rmw_tickle_subscriber->rx_timestamp_queue, &source_timestamp);
     TRACETOOLS_TRACEPOINT(
         rmw_take,
         (void *)subscription,
@@ -233,6 +236,9 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
         source_timestamp,
         *taken);
 #endif
+    if (message_info) {
+        message_info->source_timestamp = source_timestamp;
+    }
     return RMW_RET_OK;
 }
 
@@ -358,6 +364,9 @@ void receive_message(struct tt_Subscriber* subscriber, uint64_t time, uint16_t s
     rmw_sub = (rmw_tickle_subscriber_t*)((char*)subscriber - offsetof(rmw_tickle_subscriber_t, tickle_subscriber));
     mutex_lock(&rmw_sub->rx_lock);
     ret = ring_buffer_push(&rmw_sub->rx_queue, (void*)data);
+#ifdef MEASURE_LATENCY
+    ring_buffer_push(&rmw_sub->rx_timestamp_queue, &time);
+#endif
     mutex_unlock(&rmw_sub->rx_lock);
     // TODO: overwrite according to QoS policy
     if (ret != 0) {

@@ -73,6 +73,9 @@ typedef struct rmw_tickle_subscriber_t {
     struct tt_Subscriber tickle_subscriber;
     rmw_tickle_node_t* node;
     const rosidl_message_type_support_t* type_support;
+#ifdef MEASURE_LATENCY
+    struct ring_buffer rx_timestamp_queue;
+#endif
     struct ring_buffer rx_queue;
     rmw_tickle_mutex_t rx_lock;
 } rmw_tickle_subscriber_t;
