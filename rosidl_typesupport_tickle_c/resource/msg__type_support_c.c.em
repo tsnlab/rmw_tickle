@@ -84,7 +84,6 @@ def get_type_size(member: Member) -> str:
     type_ = member.type
     name_ = member.name
     type_str = ""
-    type_str_prefix = ""
     nested_type = 0
     size = 0
     if isinstance(type_, AbstractNestedType):
@@ -92,7 +91,6 @@ def get_type_size(member: Member) -> str:
             nested_type = 1
             size = type_.size
             nested_type = 1
-            type_str_prefix += f"{size} * "
         elif isinstance(type_, BoundedSequence):
 # TODO: compare capacity(type_.maximum_size) and size
             size = f"data_ptr->{name_}.size"
@@ -146,7 +144,7 @@ def get_type_size(member: Member) -> str:
     }})"""
         return loop
     else:
-        return type_str_prefix + type_str
+        return type_str
 }@
 
 @[for header_file in header_files]@
@@ -349,12 +347,18 @@ else:
     if (size > 0) {
         for (int32_t i = 0; i < size; ++i) {
             ret = @(type_name)__callbacks.data_decode((struct tt_Data*)&@(ref_str)[i], payload, len, is_native_endian);
+            if (ret < 0) {
+                return ret;
+            }
             decoded += ret;
             payload += ret;
         }
     }
 @[        else]@
     ret = @(type_name)__callbacks.data_decode((struct tt_Data*)&@(ref_str), payload, len, is_native_endian);
+    if (ret < 0) {
+        return ret;
+    }
     decoded += ret;
     payload += ret;
 @[        end if]@
@@ -403,10 +407,12 @@ elif isinstance(type_, AbstractWString):
         if (@(ref_str)[i].data == NULL) {
             if (rosidl_runtime_c__@(string_type)__init(&@(ref_str)[i]) == false) {
                 fprintf(stderr, "%s:%d: failed to initialize string\n", __func__, __LINE__);
+                return -1;
             }
         }
         if (size == 0 || rosidl_runtime_c__@(string_type)__assignn(&@(ref_str)[i], (const @(char_type)*)payload, size - 1) == false) {
             fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+            return -1;
         }
         decoded += size * sizeof(@(char_type));
         payload += size * sizeof(@(char_type));
@@ -430,10 +436,12 @@ elif isinstance(type_, AbstractWString):
     if (data_ptr->@(name_).data == NULL) {
         if (rosidl_runtime_c__@(string_type)__init(&@(ref_str)) == false) {
             fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+            return -1;
         }
     }
     if (size == 0 || rosidl_runtime_c__@(string_type)__assignn(&@(ref_str), (const @(char_type)*)payload, size - 1) == false) {
         fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+        return -1;
     }
     decoded += size * sizeof(@(char_type));
     payload += size * sizeof(@(char_type));
@@ -484,6 +492,7 @@ elif isinstance(type_, AbstractWString):
 @{typename_ = type_.typename.replace(' ', '_')}@
         if (rosidl_runtime_c__@(typename_)__Sequence__init(&data_ptr->@(name_), size) == false) {
             fprintf(stderr, "%s:%d: failed to allocate %s sequence\n", __func__, __LINE__, "@(typename_)");
+            return -1;
         }
     }
     size *= sizeof(@(BASIC_IDL_TYPES_TO_C[type_.typename]));
@@ -574,6 +583,9 @@ void* alloc_@(unique_message_identifier)(void)
 void free_@(unique_message_identifier)(void* raw)
 {
     @(tickle_type)* data_ptr = raw;
+
+    // This finalizes a temporary decoded message owned by TickLE.
+    // It is not used to destroy user-owned rclpy/rclcpp messages.
     @(unique_message_identifier)__fini(data_ptr);
 }
 
