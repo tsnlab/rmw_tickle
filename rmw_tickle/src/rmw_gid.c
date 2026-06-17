@@ -65,7 +65,7 @@ rmw_ret_t rmw_get_gid_for_publisher(const rmw_publisher_t* publisher, rmw_gid_t*
 
     // Generate a simple GID based on publisher endpoint ID
     memset(gid->data, 0, RMW_GID_STORAGE_SIZE);
-    uint32_t endpoint_id = tickle_publisher->tickle_publisher.super.id;
+    uint32_t endpoint_id = tickle_publisher->tickle_publisher.endpoint.id;
     memcpy(gid->data, &endpoint_id, sizeof(endpoint_id));
 
     RCUTILS_LOG_DEBUG("rmw_get_gid_for_publisher: Generated GID for publisher");
@@ -89,7 +89,7 @@ rmw_ret_t rmw_get_gid_for_subscription(const rmw_subscription_t* subscription, r
 
     // Generate a simple GID based on subscriber endpoint ID
     memset(gid->data, 0, RMW_GID_STORAGE_SIZE);
-    uint32_t endpoint_id = tickle_subscriber->tickle_subscriber.super.id;
+    uint32_t endpoint_id = tickle_subscriber->tickle_subscriber.endpoint.id;
     memcpy(gid->data, &endpoint_id, sizeof(endpoint_id));
 
     RCUTILS_LOG_DEBUG("rmw_get_gid_for_subscription: Generated GID for subscription");
@@ -113,7 +113,7 @@ rmw_ret_t rmw_get_gid_for_client(const rmw_client_t* client, rmw_gid_t* gid) {
 
     // Generate a simple GID based on client endpoint ID
     memset(gid->data, 0, RMW_GID_STORAGE_SIZE);
-    uint32_t endpoint_id = tickle_client->tickle_client.super.id;
+    uint32_t endpoint_id = tickle_client->tickle_client.endpoint.id;
     memcpy(gid->data, &endpoint_id, sizeof(endpoint_id));
 
     RCUTILS_LOG_DEBUG("rmw_get_gid_for_client: Generated GID for client");
@@ -137,7 +137,7 @@ rmw_ret_t rmw_get_gid_for_service(const rmw_service_t* service, rmw_gid_t* gid) 
 
     // Generate a simple GID based on service endpoint ID
     memset(gid->data, 0, RMW_GID_STORAGE_SIZE);
-    uint32_t endpoint_id = tickle_service->tickle_server.super.id;
+    uint32_t endpoint_id = tickle_service->tickle_server.endpoint.id;
     memcpy(gid->data, &endpoint_id, sizeof(endpoint_id));
 
     RCUTILS_LOG_DEBUG("rmw_get_gid_for_service: Generated GID for service");
