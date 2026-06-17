@@ -64,6 +64,7 @@ rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char
 
     // Store context reference (cast to impl type)
     tickle_node->context = (const rmw_context_t*)context;
+    tickle_node->next = NULL;
 
     // Set up the RMW node structure (embedded in tickle_node)
     rmw_node_t* rmw_node = &tickle_node->rmw_node;
@@ -88,6 +89,17 @@ rmw_node_t* rmw_create_node(rmw_context_t* context, const char* name, const char
         return NULL;
     }
 
+    rmw_tickle_context_impl_t* context_impl = (rmw_tickle_context_impl_t*)context->impl;
+    rmw_tickle_node_t* node_ptr = context_impl->node_list;
+    if (node_ptr == NULL) {
+        context_impl->node_list = tickle_node;
+    } else {
+        while (node_ptr->next != NULL) {
+            node_ptr = node_ptr->next;
+        }
+        node_ptr->next = tickle_node;
+    }
+
     RCUTILS_LOG_INFO("Created TickLE node: %s%s", namespace_, name);
 
     return rmw_node;
@@ -100,8 +112,19 @@ rmw_ret_t rmw_destroy_node(rmw_node_t* node) {
         RMW_SET_ERROR_MSG("Implementation identifiers does not match");
         return RMW_RET_INCORRECT_RMW_IMPLEMENTATION;
     }
-
     rmw_tickle_node_t* tickle_node = (rmw_tickle_node_t*)node->data;
+    rmw_tickle_context_impl_t* context = (rmw_tickle_context_impl_t*)tickle_node->context->impl;
+    rmw_tickle_node_t* node_ptr = context->node_list;
+
+    if (tickle_node == node_ptr) {
+        context->node_list = NULL;
+    } else {
+        while (node_ptr->next != tickle_node) {
+            node_ptr = node_ptr->next;
+        }
+        node_ptr->next = tickle_node->next;
+    }
+
     if (tickle_node != NULL) {
         // Destroy TickLE node
         int32_t result = tt_Node_destroy(&tickle_node->tickle_node);

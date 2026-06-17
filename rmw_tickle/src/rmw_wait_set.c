@@ -57,6 +57,7 @@ rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_condition
         memset(tickle_wait_set->guard_conditions, 0, sizeof(rmw_tickle_guard_condition_t*) * max_conditions);
     }
 
+    tickle_wait_set->context = context;
     tickle_wait_set->guard_condition_count = max_conditions;
 
     RCUTILS_LOG_DEBUG("Created TickLE wait set with %zu max conditions", max_conditions);
