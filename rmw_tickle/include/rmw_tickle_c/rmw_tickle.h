@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tickle/tickle.h>
+#include <tickle/temporary_api.h>
 
 #include "rcutils/allocator.h"
 #include "rmw/rmw.h"
