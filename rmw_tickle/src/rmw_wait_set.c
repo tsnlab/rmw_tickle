@@ -130,26 +130,15 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
         rmw_tickle_node_t* node_ptr = ((rmw_tickle_context_impl_t*)tickle_wait_set->context->impl)->node_list;
         while (node_ptr != NULL) {
             // NOTE: actual timeout = number of nodes * timeout_ns
-            int nevents = temp_tt_Node_poll(&node_ptr->tickle_node, timeout_ns);
-            node_ptr = node_ptr->next;
-
-            // NOTE: temporary
-            if (nevents > 0) {
-                data_available = true;
+            if (tt_Node_poll(&node_ptr->tickle_node) < 0) {
+                return RMW_RET_ERROR;
             }
+            node_ptr = node_ptr->next;
         }
     }
 
     if (subscriptions != NULL) {
-        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
-            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
-            // NOTE: temporary
-            // availability check should be replaced by Rx queue check function
-            if (data_available == false) {
-                // assigning NULL means this subscriber will not be notified.
-                subscriptions->subscribers[i] = NULL;
-            }
-        }
+        return RMW_RET_OK;
     }
     if (guard_conditions != NULL) {
         guard_conditions->guard_condition_count = 0;
