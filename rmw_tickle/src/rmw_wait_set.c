@@ -110,20 +110,15 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
         timeout_ns = wait_timeout->sec * tt_SECOND + wait_timeout->nsec;
     }
 
-    /*
-    There should be a function that check if subscriber's Rx queue is filled or not.
-    If it is not empty, rmw_wait will return with notification on the subscriber and without polling,
-    so that rmw_take for the subscriber is called.
     if (subscriptions != NULL) {
-        for (size_t i = 0; i < subscriptions.subscriber_count; ++i) {
-            rmw_tickle_subscriber_t sub = subscriptions.subscribers[i];
-            1. if second argument(address of buffer) is NULL, return Rx buffer state
-            data_available |= tt_Subscriber_take(sub, NULL, NULL);
-            2. use check function
-            data_available |= tt_Subscriber_get_buffer_state(sub);
+        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
+            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
+
+            if (tt_Subscriber_get_takable_count(&sub->tickle_subscriber) > 0) {
+                data_available = true;
+            }
         }
     }
-    */
 
     // call tt_Node_poll on every node
     if (data_available == false) {
@@ -138,7 +133,15 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
     }
 
     if (subscriptions != NULL) {
-        return RMW_RET_OK;
+        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
+            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
+
+            if (tt_Subscriber_get_takable_count(&sub->tickle_subscriber) > 0) {
+                data_available = true;
+            } else {
+                subscriptions->subscribers[i] = NULL;
+            }
+        }
     }
     if (guard_conditions != NULL) {
         guard_conditions->guard_condition_count = 0;

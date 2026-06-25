@@ -188,8 +188,11 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
 
     // Poll the TickLE node for incoming messages
     // In a real implementation, this would check for new messages from the network
-    int32_t ret = tt_Subscriber_take(&rmw_tickle_subscriber->tickle_subscriber, ros_message);
-    *taken = (ret >= 0);
+    *taken = false;
+    if (tt_Subscriber_take(&rmw_tickle_subscriber->tickle_subscriber, ros_message, &source_timestamp) == false) {
+        return RMW_RET_OK; // Timeout
+    }
+    *taken = true;
 
     // TODO: message ordering and QoS
     if (message_info) {
