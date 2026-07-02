@@ -50,16 +50,16 @@ class RTTPing(Node):
 
         # CSV Setup
         middleware_name = os.getenv('RMW_IMPLEMENTATION')
-        filename = f'rtt_{middleware_name}_i{interval_ms}_s{payload_size}_c{message_count}.csv'
-        file_exists = os.path.isfile(filename)
-        self.csv_file_ = open(filename, mode='a', newline='')
+        csv_filename = f'rtt_{middleware_name}_i{interval_ms}_s{payload_size}_c{message_count}.csv'
+        file_exists = os.path.isfile(csv_filename)
+        self.csv_file_ = open(csv_filename, mode='a', newline='')
         self.writer_ = csv.writer(self.csv_file_)
         self.get_logger().info(f"Ping Node started, ping interval={interval_s} s, ping count={self.ping_count_}")
 
         # Write header only if the file is new
         if not file_exists:
-            self.writer_.writerow(['count', 'timestamp_ns', 'rtt_ms'])
-        self.get_logger().info(f"Logging RTTs to {filename}")
+            self.writer_.writerow(['count', 'timestamp_ns', 'rtt_ns'])
+        self.get_logger().info(f"Logging RTTs to {csv_filename}")
     
     def monitor_callback(self):
         # check if oldest message exceeds TTL and discard if so
@@ -128,7 +128,7 @@ class RTTPing(Node):
 def main(args=sys.argv):
     parser = argparse.ArgumentParser(prog='RTT Ping node')
     parser.add_argument("-i", "--interval", help="message transmit interval in millisecond (1 ms granularity)", type=int, default=(DEFAULT_INTERVAL / rtt_common.MILLISECOND))
-    parser.add_argument("-s", "--payload-size", help="payload size in bytes. equal to or larger than 16 bytes", type=int, default=16, choices=[16, 32, 64, 128, 256, 512, 1024, MTU_PAYLOAD_SIZE])
+    parser.add_argument("-s", "--payload-size", help="payload size in bytes. equal to or larger than 16 bytes", type=int, default=16, choices=[8, 16, 32, 64, 128, 256, 512, 1024, MTU_PAYLOAD_SIZE])
     parser.add_argument("-c", "--count", help="number of messages to be sent", type=int, default=DEFAULT_COUNT)
     args = parser.parse_args()
     rclpy.init(args=sys.argv)
