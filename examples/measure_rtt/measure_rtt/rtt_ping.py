@@ -24,7 +24,7 @@ LOG_INTERVAL = rtt_common.SECOND
 MONITOR_INTERVAL = rtt_common.SECOND
 
 class RTTPing(Node):
-    def __init__(self, interval_ms: float, payload_size: int, message_count: int):
+    def __init__(self, interval_ms: int, payload_size: int, message_count: int):
         interval_s = interval_ms / 1000
 
         # ROS API invocation
@@ -49,7 +49,8 @@ class RTTPing(Node):
         self.ping_count_ = message_count
 
         # CSV Setup
-        filename = 'rtt_data.csv'
+        middleware_name = os.getenv('RMW_IMPLEMENTATION')
+        filename = f'rtt_{middleware_name}_i{interval_ms}_s{payload_size}_c{message_count}.csv'
         file_exists = os.path.isfile(filename)
         self.csv_file_ = open(filename, mode='a', newline='')
         self.writer_ = csv.writer(self.csv_file_)
@@ -126,7 +127,7 @@ class RTTPing(Node):
 
 def main(args=sys.argv):
     parser = argparse.ArgumentParser(prog='RTT Ping node')
-    parser.add_argument("-i", "--interval", help="message transmit interval in millisecond", type=float, default=(DEFAULT_INTERVAL / rtt_common.MILLISECOND))
+    parser.add_argument("-i", "--interval", help="message transmit interval in millisecond (1 ms granularity)", type=int, default=(DEFAULT_INTERVAL / rtt_common.MILLISECOND))
     parser.add_argument("-s", "--payload-size", help="payload size in bytes. equal to or larger than 16 bytes", type=int, default=16, choices=[16, 32, 64, 128, 256, 512, 1024, MTU_PAYLOAD_SIZE])
     parser.add_argument("-c", "--count", help="number of messages to be sent", type=int, default=DEFAULT_COUNT)
     args = parser.parse_args()
