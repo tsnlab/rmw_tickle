@@ -5,6 +5,7 @@ import argparse
 import csv
 import rclpy
 from collections import OrderedDict
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rtt_messages.msg import Ping, Pong
 from measure_rtt import rtt_common
@@ -137,7 +138,7 @@ def main(args=sys.argv):
         last_second: int = node.get_clock().now().nanoseconds + rtt_common.SECOND
         while node.get_clock().now().nanoseconds < last_second:
             rclpy.spin_once(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException) as error:
         node.get_logger().info("Shutting down, saving CSV...")
     finally:
         node.destroy_node()

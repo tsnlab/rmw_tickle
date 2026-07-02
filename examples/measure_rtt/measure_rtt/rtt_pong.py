@@ -1,4 +1,5 @@
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rtt_messages.msg import Ping, Pong
 
@@ -25,7 +26,7 @@ def main(args=None):
     node = RTTPong()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException) as error:
         pass
     finally:
         node.destroy_node()
