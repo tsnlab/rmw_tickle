@@ -90,7 +90,7 @@ for (payload, count), config_group in grouped_configs:
     # Add labels, titles, and legend configurations
     plt.xlabel("Time Interval (ms)")
     plt.ylabel("Average RTT")
-    plt.ylim(0, 5)
+    plt.ylim(0, 10)
     plt.title(f"Average RTT vs Time Interval\n(Payload Size: {payload} bytes, Message Count: {count})")
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.legend(title="Middleware")

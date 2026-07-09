@@ -22,23 +22,25 @@ RMW_LIST=(
     "rmw_tickle"
     "rmw_fastrtps_cpp"
     "rmw_cyclonedds_cpp"
-    "rmw_zenoh_cpp"
+#   "rmw_zenoh_cpp"
 )
 
 # unit: millisecond
 INTERVAL_LIST=(
 #   1 10 100 1000
-    1 10 50 100 200
+#   1 10 50 100 200
+    1 10 50 100 200 500 1000
 )
 
 # unit: byte
 PAYLOAD_SIZE_LIST=(
 #   8 16 32 64 128 256 512 1024 # TODO: add payload size for MTU 
-    8 16 32 64
+#   8 16 32 64
+    8
 )
 
-# unit: seconds
-TEST_DURATION=10
+# number of ping messages
+NUM_MESSAGES=1000
 
 ##################### Initialize #####################
 # check if ROS 2 is enabled
@@ -83,31 +85,49 @@ ROS_ARGUMENT_TEMPLATE=' -c ${NUM_MESSAGES} -i ${INTERVAL} -s ${PAYLOAD_SIZE}'
 function run_test() {
     MW=${1}
 
+    # run zenoh router
+    if [[ ${MW} == "rmw_zenoh_cpp" ]]; then
+        COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2_jazzy/install/setup.bash;'\'" ros2 run rmw_zenoh_cpp rmw_zenohd&"
+        eval ${COMMAND}
+    fi
+
     for INTERVAL in ${INTERVAL_LIST[@]}; do
         for PAYLOAD_SIZE in ${PAYLOAD_SIZE_LIST[@]}; do
             echo ""
             echo "middleware=${MW}, interval=${INTERVAL}, payload size=${PAYLOAD_SIZE}"
             echo ""
+
+            # run pong(RTT) or sub(throughput)
             COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2_jazzy/install/setup.bash;'\'${ROS_COMMAND}
             for DESTINATION in ${SLAVE_DESTINATION_LIST[@]}; do
                 eval ${COMMAND} ${SLAVE_COMMAND}&
             done
             sleep 2
+
+            # run ping(RTT) or pub(throughput)
             DESTINATION=${MASTER_DESTINATION}
-#           NUM_MESSAGES=$((1000 * TEST_DURATION / INTERVAL))
-            NUM_MESSAGES=1000
             ROS_ARGUMENT=$(eval echo ${ROS_ARGUMENT_TEMPLATE})
             eval ${COMMAND} ${MASTER_COMMAND} ${ROS_ARGUMENT}
+
+            # kill pong(RTT) or sub(throughput)
             COMMAND="${SSH_COMMAND} "\'' /bin/kill $(ps -e | grep -w '${SLAVE_COMMAND}' | sed "s/^ *//" | cut -d " " -f 1)'\'
             for DESTINATION in ${SLAVE_DESTINATION_LIST[@]}; do
                 eval ${COMMAND}
             done
+
+            # copy CSV from RPi to here
             CSV_FILENAME=$(eval echo ${CSV_FILENAME_TEMPLATE})
             DESTINATION=${MASTER_DESTINATION}
             COMMAND="${SCP_COMMAND}:~/${CSV_FILENAME} ${CSV_PATH}/"
             eval ${COMMAND}
         done
     done
+
+    # kill zenoh router
+    if [[ ${MW} == "rmw_zenoh_cpp" ]]; then
+        COMMAND="${SSH_COMMAND} pkill -9 -f ros && ros2 daemon stop"
+        eval ${COMMAND}
+    fi
 }
 
 function draw_graph() {
