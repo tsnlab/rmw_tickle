@@ -7,6 +7,9 @@
   <maintainer email="harim@tsnlab.com">harim</maintainer>
   <license>TODO: License declaration</license>
 
+  <build_depend>rclpy</build_depend>
+  <build_depend>my_message</build_depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>
