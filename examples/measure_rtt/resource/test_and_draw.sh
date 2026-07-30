@@ -6,16 +6,14 @@
 # Payload size: 8, 16, 32, 64, 128, 256, 512, 1024, Max bytes
 
 ##################### Configuration #####################
-MASTER_DESTINATION="tsnlab@192.168.1.121"
+MASTER_DESTINATION=tsnlab@192.168.1.107
 
 SLAVE_DESTINATION_LIST=(
-    tsnlab@192.168.1.229
+    tsnlab@192.168.1.114
 #   harim@localhost
 )
 
-SSH_COMMAND='ssh ${DESTINATION}'
-SCP_COMMAND='scp ${DESTINATION}'
-CSV_PATH="$HOME/ros2_jazzy/data/$(date +%g%m%d_%H%M%S)"
+CSV_PATH="$HOME/ros2/data/$(date +%g%m%d_%H%M%S)"
 
 ##################### Constants #####################
 RMW_LIST=(
@@ -28,8 +26,8 @@ RMW_LIST=(
 # unit: millisecond
 INTERVAL_LIST=(
 #   1 10 100 1000
-#   1 10 50 100 200
-    1 10 50 100 200 500 1000
+    1 10 50 100 200
+#   1 10 50 100 200 500 1000
 )
 
 # unit: byte
@@ -65,6 +63,8 @@ ROS_COMMAND=""
 ROS_ARGUMENT=""
 MASTER_COMMAND=""
 SLAVE_COMMAND=""
+SSH_COMMAND='ssh ${DESTINATION}'
+SCP_COMMAND='scp ${DESTINATION}'
 CSV_FILENAME=""
 
 if [[ ${MEASURE} == "RTT" ]]; then
@@ -87,7 +87,7 @@ function run_test() {
 
     # run zenoh router
     if [[ ${MW} == "rmw_zenoh_cpp" ]]; then
-        COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2_jazzy/install/setup.bash;'\'" ros2 run rmw_zenoh_cpp rmw_zenohd&"
+        COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2/install/setup.bash;'\'" ros2 run rmw_zenoh_cpp rmw_zenohd&"
         eval ${COMMAND}
     fi
 
@@ -98,7 +98,7 @@ function run_test() {
             echo ""
 
             # run pong(RTT) or sub(throughput)
-            COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2_jazzy/install/setup.bash;'\'${ROS_COMMAND}
+            COMMAND="${SSH_COMMAND} "\''export RMW_IMPLEMENTATION='${MW}'; source ${HOME}/ros2/install/setup.bash;'\'${ROS_COMMAND}
             for DESTINATION in ${SLAVE_DESTINATION_LIST[@]}; do
                 eval ${COMMAND} ${SLAVE_COMMAND}&
             done
