@@ -41,11 +41,6 @@ PAYLOAD_SIZE_LIST=(
 NUM_MESSAGES=1000
 
 ##################### Initialize #####################
-# check if ROS 2 is enabled
-if [[ ! $(export | grep "ROS_VERSION") ]]; then
-    echo "source ROS 2 setup file"
-    exit 1
-fi
 
 # Choose what to measure
 if [[ "${1}" != "RTT" && "${1}" != "THROUGHPUT" ]]; then
