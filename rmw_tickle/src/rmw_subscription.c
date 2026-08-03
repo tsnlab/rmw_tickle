@@ -25,8 +25,6 @@
 #include <tracetools/tracetools.h>
 #endif
 
-int32_t __TEMP__tt_receive_packet(struct tt_Node* node, struct tt_Data* data, int32_t buffer_len, uint64_t* timestamp);
-
 rmw_ret_t rmw_init_subscription_allocation(const rosidl_message_type_support_t* type_support,
                                            const rosidl_runtime_c__Sequence__bound* message_bounds,
                                            rmw_subscription_allocation_t* allocation) {
@@ -191,25 +189,15 @@ rmw_ret_t rmw_take_internal(const rmw_subscription_t* subscription, void* ros_me
     // Poll the TickLE node for incoming messages
     // In a real implementation, this would check for new messages from the network
     *taken = false;
-    int32_t len = __TEMP__tt_receive_packet(&rmw_tickle_subscriber->node->tickle_node,
-        ros_message, tt_MAX_BUFFER_LENGTH, &source_timestamp);
-    if (len == -1) {
-        // Timeout
-        return RMW_RET_OK;
-    } else if (len == -2) {
-        // TickLE internal packets
-        return RMW_RET_OK;
-    } else if (len < 0) {
-        // I/O Error
-        RMW_SET_ERROR_MSG("Subscriber I/O Error");
-        return RMW_RET_ERROR;
+    if (tt_Subscriber_take(&rmw_tickle_subscriber->tickle_subscriber, ros_message, &source_timestamp) == false) {
+        return RMW_RET_OK; // Timeout
     }
-    // TODO: message ordering and QoS
+    *taken = true;
 
+    // TODO: message ordering and QoS
     if (message_info) {
         message_info->source_timestamp = source_timestamp;
     }
-    *taken = true;
 #ifdef MEASURE_LATENCY
     TRACETOOLS_TRACEPOINT(
         rmw_take,

@@ -116,7 +116,7 @@ rmw_service_t* rmw_create_service(const rmw_node_t* node, const rosidl_service_t
     // Store service reference for later use
     rmw_tickle_service->tickle_server.service = service;
 
-    RCUTILS_LOG_INFO("Created TickLE service: %s", service_name);
+    RCUTILS_LOG_DEBUG("Created TickLE service: %s", service_name);
     return rmw_service;
 fail:
     if (service != NULL) {

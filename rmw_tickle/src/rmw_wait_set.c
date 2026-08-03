@@ -57,6 +57,7 @@ rmw_wait_set_t* rmw_create_wait_set(rmw_context_t* context, size_t max_condition
         memset(tickle_wait_set->guard_conditions, 0, sizeof(rmw_tickle_guard_condition_t*) * max_conditions);
     }
 
+    tickle_wait_set->context = context;
     tickle_wait_set->guard_condition_count = max_conditions;
 
     RCUTILS_LOG_DEBUG("Created TickLE wait set with %zu max conditions", max_conditions);
@@ -96,24 +97,51 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
     }
 
     rmw_tickle_wait_set_t* tickle_wait_set = (rmw_tickle_wait_set_t*)wait_set->data;
+    uint64_t timeout_ns;
+    bool data_available = false;
+
     if (tickle_wait_set == NULL) {
         RMW_SET_ERROR_MSG("Wait set data is NULL");
         return RMW_RET_ERROR;
+    } 
+    if (wait_timeout == NULL) {
+        timeout_ns = 0;
+    } else {
+        timeout_ns = wait_timeout->sec * tt_SECOND + wait_timeout->nsec;
     }
 
-    // Implement a basic wait mechanism using TickLE node polling
-    // In a real implementation, this would:
-    // 1. Poll all subscriptions for new messages
-    // 2. Check guard conditions for triggers
-    // 3. Poll services for new requests
-    // 4. Poll clients for new responses
-    // 5. Handle events
-    // 6. Wait for the specified timeout or until something is ready
-
-    // Initialize all arrays to indicate no items are ready
     if (subscriptions != NULL) {
-        // TODO: There should be a way to check if there are any subscriptions that are ready to be taken
-        return RMW_RET_OK;
+        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
+            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
+
+            if (tt_Subscriber_get_takable_count(&sub->tickle_subscriber) > 0) {
+                data_available = true;
+            }
+        }
+    }
+
+    // call tt_Node_poll on every node
+    if (data_available == false) {
+        rmw_tickle_node_t* node_ptr = ((rmw_tickle_context_impl_t*)tickle_wait_set->context->impl)->node_list;
+        while (node_ptr != NULL) {
+            // NOTE: actual timeout = number of nodes * timeout_ns
+            if (tt_Node_poll(&node_ptr->tickle_node) < 0) {
+                return RMW_RET_ERROR;
+            }
+            node_ptr = node_ptr->next;
+        }
+    }
+
+    if (subscriptions != NULL) {
+        for (size_t i = 0; i < subscriptions->subscriber_count; ++i) {
+            rmw_tickle_subscriber_t* sub = subscriptions->subscribers[i];
+
+            if (tt_Subscriber_get_takable_count(&sub->tickle_subscriber) > 0) {
+                data_available = true;
+            } else {
+                subscriptions->subscribers[i] = NULL;
+            }
+        }
     }
     if (guard_conditions != NULL) {
         guard_conditions->guard_condition_count = 0;
@@ -128,21 +156,5 @@ rmw_ret_t rmw_wait(rmw_subscriptions_t* subscriptions, rmw_guard_conditions_t* g
         events->event_count = 0;
     }
 
-    // Poll TickLE nodes for activity
-    // This is a simplified implementation - in reality, we would need to:
-    // - Track which nodes are associated with each subscription/service/client
-    // - Poll only the relevant nodes
-    // - Handle multiple nodes efficiently
-
-    // For now, we'll just simulate a timeout
-    if (wait_timeout != NULL) {
-        // Convert timeout to milliseconds for sleep
-        uint64_t timeout_ms = wait_timeout->sec * 1000 + wait_timeout->nsec / 1000000;
-        if (timeout_ms > 0) {
-            // Simple sleep simulation - in reality, we would poll TickLE nodes
-            usleep(timeout_ms * 1000); // Convert to microseconds
-        }
-    }
-
-    return RMW_RET_TIMEOUT;
+    return data_available ? RMW_RET_OK : RMW_RET_TIMEOUT;
 }

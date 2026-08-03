@@ -25,6 +25,7 @@ extern const char* const rmw_tickle_serialization_format;
 typedef struct rmw_tickle_context_impl_t {
     // Graph guard condition for node discovery
     rmw_guard_condition_t graph_guard_condition;
+    struct rmw_tickle_node_t* node_list;
     // Placeholder for TickLE context data
     // This can be extended with TickLE-specific context information
     int dummy; // Temporary field to avoid empty struct
@@ -40,6 +41,8 @@ typedef struct rmw_tickle_node_t {
     struct tt_Node tickle_node;
     rcutils_allocator_t allocator;
     const rmw_context_t* context; // Store context reference
+
+    struct rmw_tickle_node_t* next; // pointer to next node
 } rmw_tickle_node_t;
 
 // TickLE specific publisher data
@@ -84,6 +87,8 @@ typedef struct rmw_tickle_guard_condition_t {
 // TickLE specific wait set data
 typedef struct rmw_tickle_wait_set_t {
     rmw_wait_set_t rmw_wait_set; // RMW wait set structure (must be first)
+    rmw_context_t* context;
+
     rmw_tickle_guard_condition_t** guard_conditions;
     size_t guard_condition_count;
     rcutils_allocator_t allocator;

@@ -62,6 +62,7 @@ add_library(${PROJECT_NAME} SHARED
   tickle/src/hal_linux.c
   tickle/src/log.c
   tickle/src/tickle.c
+  tickle/src/rx_buffer_mgmt.c
 )
 
 # Link libraries

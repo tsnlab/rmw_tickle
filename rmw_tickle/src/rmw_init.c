@@ -94,6 +94,7 @@ rmw_ret_t rmw_init(const rmw_init_options_t* options, rmw_context_t* context) {
     // Initialize graph guard condition
     impl->graph_guard_condition.implementation_identifier = RMW_TICKLE_IDENTIFIER;
     impl->graph_guard_condition.data = NULL;
+    impl->node_list = NULL;
 
     context->impl = (rmw_context_impl_t*)impl;
 
