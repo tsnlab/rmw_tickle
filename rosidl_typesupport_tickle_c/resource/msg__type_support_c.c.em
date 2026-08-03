@@ -62,7 +62,7 @@ tickle_type = f"struct {unique_message_identifier}"
 
 class UnsupportedError(Exception):
         pass
-  
+
 def get_type_size(member: Member) -> str:
     from rosidl_parser.definition import AbstractNestedType
     from rosidl_parser.definition import AbstractGenericString
@@ -84,7 +84,6 @@ def get_type_size(member: Member) -> str:
     type_ = member.type
     name_ = member.name
     type_str = ""
-    type_str_prefix = ""
     nested_type = 0
     size = 0
     if isinstance(type_, AbstractNestedType):
@@ -92,7 +91,6 @@ def get_type_size(member: Member) -> str:
             nested_type = 1
             size = type_.size
             nested_type = 1
-            type_str_prefix += f"{size} * "
         elif isinstance(type_, BoundedSequence):
 # TODO: compare capacity(type_.maximum_size) and size
             size = f"data_ptr->{name_}.size"
@@ -110,20 +108,20 @@ def get_type_size(member: Member) -> str:
         if nested_type == 0:
             str_size = f"data_ptr->{name_}.size"
         elif nested_type == 1:
-            str_size = f"data_ptr->{name_}[0].size"
+            str_size = f"data_ptr->{name_}[i_].size"
         else:
             str_size = f"data_ptr->{name_}.data[i_].size"
         if isinstance(type_, AbstractString):
-            type_str = f"{str_size} * sizeof(char)"
+            type_str = f"sizeof(uint16_t) + ({str_size} + 1) * sizeof(char)"
         else:
-            type_str = f"{str_size} * sizeof(uint16_t)"
+            type_str = f"sizeof(uint16_t) + ({str_size} + 1) * sizeof(uint16_t)"
 
     elif isinstance(type_, NamedType) or isinstance(type_, NamespacedType):
         named_type_prefix = ""
         if nested_type == 0:
             name_ = f"&data_ptr->{name_}"
         elif nested_type == 1:
-            name_ = f"&data_ptr->{name_}[0]"
+            name_ = f"&data_ptr->{name_}[i_]"
         else:
             name_ = f"&data_ptr->{name_}.data[i_]"
         if isinstance(type_, NamespacedType):
@@ -136,9 +134,9 @@ def get_type_size(member: Member) -> str:
     else:
         raise UnsupportedError(f"{type(type_)} not supported")
 
-    if nested_type == 2:
+    if nested_type > 0:
         loop = f"""        ({{
-        int32_t size_sum = 0;
+        int32_t size_sum = sizeof(uint16_t);
         for (uint32_t i_ = 0; i_ < {size}; ++i_) {{
             size_sum += {type_str};
         }}
@@ -146,7 +144,7 @@ def get_type_size(member: Member) -> str:
     }})"""
         return loop
     else:
-        return type_str_prefix + type_str
+        return type_str
 }@
 
 @[for header_file in header_files]@
@@ -256,7 +254,7 @@ typedef @(unique_message_identifier) _@(message_name)_type;
 
 @# TODO: separate generating encoder and decoder.
 @[def generate_encoder(encode_or_decode: str, member: Member, get_type_size)]@
-@{  
+@{
 from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractNestedType
 from rosidl_parser.definition import AbstractNestableType
@@ -317,10 +315,14 @@ else:
 }@
 @[    if encode_or_decode == "encode"]@
 @[        if size != 0]@
-    if (@(size) > 0) {
-        size = @(type_name)__callbacks.data_encode_size((struct tt_Data*)&@(ref_str)[0]);
-        for (int32_t i = 0; i < @(size); ++i) {
-            ret = @(type_name)__callbacks.data_encode((struct tt_Data*)&@(ref_str)[i], payload, size);
+    size = @(size);
+    memcpy(payload, &size, sizeof(uint16_t));
+    encoded += sizeof(uint16_t);
+    payload += sizeof(uint16_t);
+    if (size > 0) {
+        for (int32_t i = 0; i < size; ++i) {
+            int32_t element_size = @(type_name)__callbacks.data_encode_size((struct tt_Data*)&@(ref_str)[i]);
+            ret = @(type_name)__callbacks.data_encode((struct tt_Data*)&@(ref_str)[i], payload, element_size);
             encoded += ret;
             payload += ret;
         }
@@ -337,16 +339,26 @@ else:
     memcpy(&size, payload, sizeof(uint16_t));
     decoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
-    size = @(size);
+@[            if nested_type == 1]@
+    if (size != @(size)) {
+        return -1;
+    }
+@[            end if]@
     if (size > 0) {
         for (int32_t i = 0; i < size; ++i) {
             ret = @(type_name)__callbacks.data_decode((struct tt_Data*)&@(ref_str)[i], payload, len, is_native_endian);
+            if (ret < 0) {
+                return ret;
+            }
             decoded += ret;
             payload += ret;
         }
     }
 @[        else]@
     ret = @(type_name)__callbacks.data_decode((struct tt_Data*)&@(ref_str), payload, len, is_native_endian);
+    if (ret < 0) {
+        return ret;
+    }
     decoded += ret;
     payload += ret;
 @[        end if]@
@@ -370,7 +382,7 @@ elif isinstance(type_, AbstractWString):
     encoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
     for (size_t i = 0; i < @(size); ++i) {
-        size = @(ref_str)[i].size;
+        size = @(ref_str)[i].size + 1;
         memcpy(payload, &size, sizeof(uint16_t));
         encoded += sizeof(uint16_t);
         payload += sizeof(uint16_t);
@@ -381,28 +393,34 @@ elif isinstance(type_, AbstractWString):
     }
 @[        else]@
     memcpy(&size, payload, sizeof(uint16_t));
-    size = @(size);
     decoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
-    for (size_t i = 0; i < @(size); ++i) {
+@[            if nested_type == 1]@
+    if (size != @(size)) {
+        return -1;
+    }
+@[            end if]@
+    for (size_t i = 0, count = size; i < count; ++i) {
         memcpy(&size, payload, sizeof(uint16_t));
         decoded += sizeof(uint16_t);
         payload += sizeof(uint16_t);
         if (@(ref_str)[i].data == NULL) {
             if (rosidl_runtime_c__@(string_type)__init(&@(ref_str)[i]) == false) {
                 fprintf(stderr, "%s:%d: failed to initialize string\n", __func__, __LINE__);
+                return -1;
             }
         }
-        if (rosidl_runtime_c__@(string_type)__assignn(&@(ref_str)[i], payload, size) == false) {
+        if (size == 0 || rosidl_runtime_c__@(string_type)__assignn(&@(ref_str)[i], (const @(char_type)*)payload, size - 1) == false) {
             fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+            return -1;
         }
-        decoded += size;
-        payload += size;
+        decoded += size * sizeof(@(char_type));
+        payload += size * sizeof(@(char_type));
     }
 @[        end if]@
 @[    else]@
 @[        if encode_or_decode == "encode"]@
-    size = @(ref_str).size;
+    size = @(ref_str).size + 1;
     memcpy(payload, &size, sizeof(uint16_t));
     encoded += sizeof(uint16_t);
     payload += sizeof(uint16_t);
@@ -418,17 +436,42 @@ elif isinstance(type_, AbstractWString):
     if (data_ptr->@(name_).data == NULL) {
         if (rosidl_runtime_c__@(string_type)__init(&@(ref_str)) == false) {
             fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+            return -1;
         }
     }
-    if (rosidl_runtime_c__@(string_type)__assignn(&@(ref_str), payload, size) == false) {
+    if (size == 0 || rosidl_runtime_c__@(string_type)__assignn(&@(ref_str), (const @(char_type)*)payload, size - 1) == false) {
         fprintf(stderr, "%s:%d: failed to allocate string\n", __func__, __LINE__);
+        return -1;
     }
-    decoded += size;
-    payload += size;
+    decoded += size * sizeof(@(char_type));
+    payload += size * sizeof(@(char_type));
 @[        end if]@
 @[    end if]@
 @[else]@
-@[    if nested_type == 2]@
+@[    if nested_type == 1]@
+@[        if encode_or_decode == "encode"]@
+@# TODO: include tickle header and use _tt_memcpy
+    size = @(size);
+    memcpy(payload, &size, sizeof(uint16_t));
+    encoded += sizeof(uint16_t);
+    payload += sizeof(uint16_t);
+    size *= sizeof(@(BASIC_IDL_TYPES_TO_C[type_.typename]));
+    memcpy(payload, @(ref_str), size);
+    encoded += size;
+    payload += size;
+@[        else]@
+    memcpy(&size, payload, sizeof(uint16_t));
+    decoded += sizeof(uint16_t);
+    payload += sizeof(uint16_t);
+    if (size != @(size)) {
+        return -1;
+    }
+    size *= sizeof(@(BASIC_IDL_TYPES_TO_C[type_.typename]));
+    memcpy(@(ref_str), payload, size);
+    decoded += size;
+    payload += size;
+@[        end if]@
+@[    elif nested_type == 2]@
 @[        if encode_or_decode == "encode"]@
 @# TODO: include tickle header and use _tt_memcpy
     if (@(size) > 0) {
@@ -449,6 +492,7 @@ elif isinstance(type_, AbstractWString):
 @{typename_ = type_.typename.replace(' ', '_')}@
         if (rosidl_runtime_c__@(typename_)__Sequence__init(&data_ptr->@(name_), size) == false) {
             fprintf(stderr, "%s:%d: failed to allocate %s sequence\n", __func__, __LINE__, "@(typename_)");
+            return -1;
         }
     }
     size *= sizeof(@(BASIC_IDL_TYPES_TO_C[type_.typename]));
@@ -539,7 +583,10 @@ void* alloc_@(unique_message_identifier)(void)
 void free_@(unique_message_identifier)(void* raw)
 {
     @(tickle_type)* data_ptr = raw;
-    (void)data_ptr;
+
+    // This finalizes a temporary decoded message owned by TickLE.
+    // It is not used to destroy user-owned rclpy/rclcpp messages.
+    @(unique_message_identifier)__fini(data_ptr);
 }
 
 int32_t convert_to_tickle_from_@(unique_message_identifier)(void* to, void* from)
